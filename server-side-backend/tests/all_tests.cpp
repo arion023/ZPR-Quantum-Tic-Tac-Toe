@@ -1,4 +1,3 @@
-#pragma once
 #define CATCH_CONFIG_MAIN
 
 #include <catch2/catch.hpp>
@@ -23,18 +22,18 @@ TEST_CASE("making entanglement", "[board]")
 {
 	auto b = std::make_unique<Board>(5);
 	
-	REQUIRE(b->make_entanglement(Sign::X, 0, 0) == Result::False);
-	REQUIRE(b->make_entanglement(Sign::O, 25, 2) == Result::False);
-	REQUIRE(b->make_entanglement(Sign::O, 2, -2) == Result::False);
+	REQUIRE(b->make_entanglement(Sign::X, 0, 0) == Status::False);
+	REQUIRE(b->make_entanglement(Sign::O, 25, 2) == Status::False);
+	REQUIRE(b->make_entanglement(Sign::O, 2, -2) == Status::False);
 	
 	//make entanglement returns if cycle occured
-	REQUIRE(b->make_entanglement(Sign::X, 0, 1) == Result::True);
-	REQUIRE(b->make_entanglement(Sign::O, 0, 2) == Result::True);
-	REQUIRE(b->make_entanglement(Sign::X, 0, 3) == Result::True);
+	REQUIRE(b->make_entanglement(Sign::X, 0, 1) == Status::True);
+	REQUIRE(b->make_entanglement(Sign::O, 0, 2) == Status::True);
+	REQUIRE(b->make_entanglement(Sign::X, 0, 3) == Status::True);
 
-	REQUIRE(b->make_entanglement(Sign::O, 5, 6) == Result::True);
-	REQUIRE(b->make_entanglement(Sign::X, 5, 7) == Result::True);
-	REQUIRE(b->make_entanglement(Sign::O, 5, 8) == Result::True);
+	REQUIRE(b->make_entanglement(Sign::O, 5, 6) == Status::True);
+	REQUIRE(b->make_entanglement(Sign::X, 5, 7) == Status::True);
+	REQUIRE(b->make_entanglement(Sign::O, 5, 8) == Status::True);
 
 	auto tile0 = b->get_tile(0);
 	auto entanglements0 = tile0->get_entaglements();
@@ -54,9 +53,9 @@ TEST_CASE("structure of graph", "[board]")
 	SECTION("graph roots creating")
 	{
 		REQUIRE(b->get_roots().size() == 2);
-		REQUIRE(b->make_entanglement(Sign::O, 10, 11) == Result::True);
-		REQUIRE(b->make_entanglement(Sign::O, 10, 12) == Result::True);
-		REQUIRE(b->make_entanglement(Sign::O, 12, 13) == Result::True);
+		REQUIRE(b->make_entanglement(Sign::O, 10, 11) == Status::True);
+		REQUIRE(b->make_entanglement(Sign::O, 10, 12) == Status::True);
+		REQUIRE(b->make_entanglement(Sign::O, 12, 13) == Status::True);
 		REQUIRE(b->get_roots().size() == 3);
 	}
 
@@ -106,9 +105,9 @@ TEST_CASE("making game", "[game]")
 	SECTION("game creating")
 	{
 		Game game = Game(1, 5, 2);
-		REQUIRE(game.get_status() == GameStatus::off);
+		REQUIRE(game.get_status() == Status::Off);
 		game.start();
-		REQUIRE(game.get_status() == GameStatus::ongoing);
+		REQUIRE(game.get_status() == Status::Ongoing);
 		REQUIRE(game.get_turn() == Sign::X);
 		REQUIRE(game.get_winner() == Sign::None);
 		REQUIRE(game.get_board()->get_size() == 5);

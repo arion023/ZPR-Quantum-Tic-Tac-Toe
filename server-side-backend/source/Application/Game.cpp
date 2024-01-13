@@ -3,7 +3,7 @@
 Game::Game(int game_id, int n, int players_number)
 	: id(game_id)
 	, players(players_number)
-	, status(GameStatus::off)
+	, status(Status::Off)
 	, game_winner(Sign::None)
 	, turn(Sign::None)
 {
@@ -13,7 +13,7 @@ Game::Game(int game_id, int n, int players_number)
 bool Game::start(Sign starting_sign)
 {
 	//players initialization (optional)
-	status = GameStatus::ongoing;
+	status = Status::Ongoing;
 	turn = starting_sign;
 	return true;
 }
@@ -35,26 +35,38 @@ bool Game::make_move(Sign sign, int tile1_idx, int tile2_idx)
 	//-1 means operation of choosing tile to collapse
 	if(tile2_idx == -1)
 	{
-		//move to make collapse
-		//TODO handling if inccorect tile is passed
-		board->tile_to_collapse(tile1_idx);
-		status = GameStatus::ongoing;
-		Sign winner = board->check_for_winner();
-		if(winner != Sign::None)
+		if(status == Status::Cycle)
 		{
-			status = GameStatus::finished;
-			game_winner = winner;
+
+			//move to make collapse
+			//TODO handling if inccorect tile is passed
+			if(board->tile_to_collapse(tile1_idx))
+			{
+				status = Status::Ongoing;
+				Sign winner = board->check_for_winner();
+				if(winner != Sign::None)
+				{
+					game_winner = winner;
+					status = Status::Finished;
+				}
+			}
+			else
+				return false;
+		}
+		else
+		{
+			return false;
 		}
 	}
 	else
 	{
-		bool ifCycle = board->make_entanglement(sign, tile1_idx, tile2_idx);
-
-		if(ifCycle)
-		{
-			status = GameStatus::cycle;
-		}
+		Status result = board->make_entanglement(sign, tile1_idx, tile2_idx);
+		if(result == Status::False)
+			return false;
+		else
+			status = result;
 	}
+
 	change_turn();
 	return true;
 }

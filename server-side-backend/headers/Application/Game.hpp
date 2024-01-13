@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Board.hpp"
-#include "GameStatus.hpp"
 
 class Game
 {
@@ -10,17 +9,18 @@ public:
 	int get_id();
 	int get_status();
 	Sign get_turn();
-	bool change_turn();
+	Sign get_winner();
 	std::shared_ptr<Board> get_board();
 
-	bool start();
+	bool start(Sign starting_sign = Sign::X);
 	bool make_move(Sign sign, int tile1_idx, int tile2_idx);
 
 private:
 	int id;
-	GameStatus status;
+	Status status;
 	Sign game_winner;
 	int players;
 	Sign turn;
 	std::shared_ptr<Board> board;
+	bool change_turn();
 };

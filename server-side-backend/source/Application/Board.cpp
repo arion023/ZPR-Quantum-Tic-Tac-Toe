@@ -25,7 +25,7 @@ std::vector<std::shared_ptr<Tile>> Board::get_roots() const
 
 std::shared_ptr<Tile> Board::get_tile(int i) const
 {
-	if(i >= n*n || i < 0)
+	if(i >= n * n || i < 0)
 	{
 		return nullptr;
 	}
@@ -67,18 +67,17 @@ void Board::remove_graph_root(std::shared_ptr<Tile> root)
 }
 
 //returns if cycle occured
-Result Board::make_entanglement(Sign sign, int tile1_idx, int tile2_idx)
+Status Board::make_entanglement(Sign sign, int tile1_idx, int tile2_idx)
 {
 	if(tile1_idx == tile2_idx)
 	{
-		return Result::False;
+		return Status::False;
 	}
 
 	if(!get_tile(tile1_idx) || !get_tile(tile2_idx))
 	{
-		return Result::False;
+		return Status::False;
 	}
-
 
 	//check if this entaglement is connected with any graph
 	std::weak_ptr<Tile> root_t1 = get_tile(tile1_idx)->get_root();
@@ -95,7 +94,7 @@ Result Board::make_entanglement(Sign sign, int tile1_idx, int tile2_idx)
 				sign, tiles_table[tile1_idx], tiles_table[tile2_idx]);
 
 			cycle_occured = true;
-			return Result::Cycle;
+			return Status::Cycle;
 		}
 		else
 		{
@@ -123,13 +122,17 @@ Result Board::make_entanglement(Sign sign, int tile1_idx, int tile2_idx)
 
 	entanglement->update_entanglements(entanglement);
 
-	return Result::True;
+	return Status::True;
 }
 
 bool Board::tile_to_collapse(int tile_idx)
 {
 	auto tile = get_tile(tile_idx);
-	if(tile!=cycle_entanglement->get_tile1() && tile!=cycle_entanglement->get_tile2())
+
+	if(!tile)
+		return false;
+
+	if(tile != cycle_entanglement->get_tile1() && tile != cycle_entanglement->get_tile2())
 		return false;
 
 	tile->measurement(cycle_entanglement);

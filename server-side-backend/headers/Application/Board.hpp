@@ -2,7 +2,7 @@
 
 #include "Entanglement.hpp"
 #include "Tile.hpp"
-#include "Result.hpp"
+#include "Status.hpp"
 
 #include <sstream>
 
@@ -11,7 +11,7 @@ class Board
 public:
 	Board(int n);
 
-	Result make_entanglement(Sign sign, int tile1_idx, int tile2_idx);
+	Status make_entanglement(Sign sign, int tile1_idx, int tile2_idx);
 	bool tile_to_collapse(int tile_idx);
 	Sign check_for_winner() const;
 

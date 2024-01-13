@@ -5,15 +5,16 @@ Game::Game(int game_id, int n, int players_number)
 	, players(players_number)
 	, status(GameStatus::off)
 	, game_winner(Sign::None)
-	, turn(Sign::X)
+	, turn(Sign::None)
 {
 	board = std::make_shared<Board>(n);
 }
 
-bool Game::start()
+bool Game::start(Sign starting_sign)
 {
 	//players initialization (optional)
 	status = GameStatus::ongoing;
+	turn = starting_sign;
 	return true;
 }
 
@@ -71,6 +72,11 @@ int Game::get_status()
 Sign Game::get_turn()
 {
 	return turn;
+}
+
+Sign Game::get_winner()
+{
+	return game_winner;
 }
 
 std::shared_ptr<Board> Game::get_board()

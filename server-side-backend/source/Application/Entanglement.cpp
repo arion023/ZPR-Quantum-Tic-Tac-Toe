@@ -30,7 +30,7 @@ std::shared_ptr<Tile> Entanglement::get_next_tile(std::shared_ptr<Tile> call_til
 	}
 }
 
-std::shared_ptr<Tile> Entanglement::get_next_tile(const Tile &call_tile)
+std::shared_ptr<Tile> Entanglement::get_next_tile(const Tile& call_tile)
 {
 	if(*tile1.lock() == call_tile)
 	{
@@ -42,8 +42,17 @@ std::shared_ptr<Tile> Entanglement::get_next_tile(const Tile &call_tile)
 	}
 }
 
+std::shared_ptr<Tile> Entanglement::get_tile1() const
+{
+	return tile1.lock();
+}
 
-bool operator==(const Entanglement &e1, const Entanglement &e2)
+std::shared_ptr<Tile> Entanglement::get_tile2() const
+{
+	return tile2.lock();
+}
+
+bool operator==(const Entanglement& e1, const Entanglement& e2)
 {
 	bool ifTile1 = (e1.tile1.lock() == e2.tile1.lock());
 	bool ifTile2 = (e1.tile2.lock() == e2.tile2.lock());

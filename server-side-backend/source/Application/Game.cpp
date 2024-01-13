@@ -27,7 +27,7 @@ bool Game::change_turn()
 bool Game::make_move(Sign sign, int tile1_idx, int tile2_idx)
 {
 	//check if correct player is making move
-	if(sign != turn)
+	if((status!=Status::Ongoing && status == Status::Cycle) || sign != turn)
 	{
 		return false;
 	}

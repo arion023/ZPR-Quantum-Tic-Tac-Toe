@@ -33,7 +33,6 @@ void Board::rebase_cycle(std::shared_ptr<Tile> root, std::shared_ptr<Tile> new_r
 	remove_graph_root(root);
 	root->set_root(new_root);
 	change_childrens_root(root, root, new_root);
-	//todo change value of w ptr in graph
 }
 
 void Board::change_childrens_root(std::shared_ptr<Tile> excluded_tile,
@@ -62,6 +61,7 @@ void Board::remove_graph_root(std::shared_ptr<Tile> root)
 	}
 }
 
+//returns if cycle occured
 bool Board::make_entanglement(Sign sign, int tile1_idx, int tile2_idx)
 {
 	//check if this entaglement is connected with any graph
@@ -75,8 +75,11 @@ bool Board::make_entanglement(Sign sign, int tile1_idx, int tile2_idx)
 		if(shr_root_t1 == shr_root_t2)
 		{
 			//that means cycle occured
+			cycle_entanglement = std::make_shared<Entanglement>(
+				sign, tiles_table[tile1_idx], tiles_table[tile2_idx]);
+
 			cycle_occured = true;
-			return false;
+			return cycle_occured;
 		}
 		else
 		{
@@ -99,34 +102,26 @@ bool Board::make_entanglement(Sign sign, int tile1_idx, int tile2_idx)
 		complete_graphs_roots.push_back(root_t1.lock());
 	}
 
-	//TODO checking if correct move
-
 	std::shared_ptr<Entanglement> entanglement =
 		std::make_shared<Entanglement>(sign, tiles_table[tile1_idx], tiles_table[tile2_idx]);
 
 	entanglement->update_entanglements(entanglement);
 
-	return true;
+	return cycle_occured;
 }
 
-void Board::collapse_cycle(std::shared_ptr<Tile> excluded_tile, std::shared_ptr<Tile> parent) const
+void Board::tile_to_collapse(int tile_idx)
 {
-	auto entanglements = parent->get_entaglements();
-	for(auto entanglement : entanglements)
-	{
-		std::shared_ptr<Tile> children = entanglement->get_next_tile(parent);
-		if(children != excluded_tile)
-		{
-			collapse_cycle(parent, children);
-		}
-	}
-	parent->measurement();
+	auto tile = get_tile(tile_idx);
+	tile->measurement(cycle_entanglement);
+	cycle_entanglement.reset();
+	cycle_occured = false;
 }
 
-bool Board::check_for_winner() const
+Sign Board::check_for_winner() const
 {
 	//TODO
-	return false;
+	return Sign::None;
 }
 
 json Board::to_json()

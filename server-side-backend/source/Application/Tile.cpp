@@ -22,8 +22,19 @@ std::vector<std::shared_ptr<Entanglement>> Tile::get_entaglements()
 	return entanglements;
 }
 
-bool Tile::measurement()
+bool Tile::measurement(std::shared_ptr<Entanglement> collapsing_entanglement)
 {
+	for(auto e : entanglements)
+	{
+		if(e!=collapsing_entanglement)
+		{
+			std::shared_ptr<Tile> children = e->get_next_tile(*this);
+			children->measurement(e);
+		}
+	}
+	const_sign = collapsing_entanglement->get_sign();
+	entanglements.clear();
+	root.reset();
 	return true;
 }
 
@@ -43,6 +54,11 @@ std::vector<Sign> Tile::get_signs()
 	}
 
 	return signs;
+}
+
+Sign Tile::get_const_sign() const
+{
+	return const_sign;
 }
 
 void Tile::set_root(std::shared_ptr<Tile> new_root)
@@ -69,6 +85,12 @@ json Tile::to_json()
 	}
 
 	return tile_json;
+}
+
+
+bool operator==(const Tile &t1, const Tile &t2)
+{
+	return (t1.index == t2.index);
 }
 
 std::ostream& operator<<(std::ostream& stream, Tile& tile)

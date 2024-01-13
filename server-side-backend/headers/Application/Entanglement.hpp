@@ -12,8 +12,11 @@ public:
 	void update_entanglements(std::shared_ptr<Entanglement> entanglement) const;
 
 	std::shared_ptr<Tile> get_next_tile(std::shared_ptr<Tile> call_tile);
+	std::shared_ptr<Tile> get_next_tile(const Tile &call_tile);
 
 	Sign get_sign();
+
+    friend bool operator==(const Entanglement &e1, const Entanglement &e2);
 
 private:
 	const Sign sign;

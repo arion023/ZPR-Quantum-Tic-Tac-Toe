@@ -21,11 +21,11 @@ std::unique_ptr<Board> set_up_board()
 TEST_CASE("making entanglement", "[board]")
 {
 	auto b = std::make_unique<Board>(5);
-	
+
 	REQUIRE(b->make_entanglement(Sign::X, 0, 0) == Status::False);
 	REQUIRE(b->make_entanglement(Sign::O, 25, 2) == Status::False);
 	REQUIRE(b->make_entanglement(Sign::O, 2, -2) == Status::False);
-	
+
 	//make entanglement returns if cycle occured
 	REQUIRE(b->make_entanglement(Sign::X, 0, 1) == Status::True);
 	REQUIRE(b->make_entanglement(Sign::O, 0, 2) == Status::True);
@@ -99,6 +99,28 @@ Game setupGame()
 	return game;
 }
 
+Game setup()
+{
+	Game game = Game(1, 5, 2);
+	game.start();
+
+	game.make_move(Sign::O, 0, 1);
+	game.make_move(Sign::X, 0, 0);
+	game.make_move(Sign::X, -1, 0);
+	game.make_move(Sign::X, 0, 25);
+	game.make_move(Sign::X, 0, -1);
+	game.make_move(Sign::X, 0, 1);
+
+	game.make_move(Sign::X, 1, 0);
+	game.make_move(Sign::O, 1, 2);
+	game.make_move(Sign::X, 2, 3);
+	game.make_move(Sign::O, 5, 6);
+	game.make_move(Sign::X, 7, 8);
+	game.make_move(Sign::O, 8, 1);
+
+	return game;
+}
+
 TEST_CASE("making game", "[game]")
 {
 
@@ -106,6 +128,8 @@ TEST_CASE("making game", "[game]")
 	{
 		Game game = Game(1, 5, 2);
 		REQUIRE(game.get_status() == Status::Off);
+		//make move before start
+		REQUIRE(game.make_move(Sign::X, 0, 1) == false);
 		game.start();
 		REQUIRE(game.get_status() == Status::Ongoing);
 		REQUIRE(game.get_turn() == Sign::X);
@@ -113,9 +137,41 @@ TEST_CASE("making game", "[game]")
 		REQUIRE(game.get_board()->get_size() == 5);
 	}
 
-	SECTION("making moves (cycle)")
+	SECTION("making moves")
 	{
 		Game game = setupGame();
-		game.make_move(Sign::O, 0, 1);
+		game.start();
+		//invalid sign
+		REQUIRE(game.make_move(Sign::O, 0, 1) == false);
+		//self entanglement
+		REQUIRE(game.make_move(Sign::X, 0, 0) == false);
+		//invalid idx
+		REQUIRE(game.make_move(Sign::X, -1, 0) == false);
+		//invalid idx
+		REQUIRE(game.make_move(Sign::X, 0, 25) == false);
+		//trying to collapse cycle without cycle
+		REQUIRE(game.make_move(Sign::X, 0, -1) == false);
+		//correct move
+		REQUIRE(game.make_move(Sign::X, 0, 1) == true);
+		REQUIRE(game.get_turn() == Sign::O);
+		//invalid sign
+		REQUIRE(game.make_move(Sign::X, 1, 0) == false);
+		//correct move
+		REQUIRE(game.make_move(Sign::O, 1, 2) == true);
+		REQUIRE(game.make_move(Sign::X, 2, 3) == true);
+		REQUIRE(game.make_move(Sign::O, 5, 6) == true);
+		REQUIRE(game.make_move(Sign::X, 7, 8) == true);
+		REQUIRE(game.make_move(Sign::O, 8, 1) == true);
+	}
+
+	SECTION("creating cycle")
+	{
+		Game game = setupGame();
+		//invalid sign
+	}
+
+	SECTION("game finishing")
+	{
+		//TODO
 	}
 }

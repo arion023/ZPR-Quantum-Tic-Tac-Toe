@@ -22,16 +22,20 @@ std::unique_ptr<Board> set_up_board()
 TEST_CASE("making entanglement", "[board]")
 {
 	auto b = std::make_unique<Board>(5);
+	
+	REQUIRE(b->make_entanglement(Sign::X, 0, 0) == Result::False);
+	REQUIRE(b->make_entanglement(Sign::O, 25, 2) == Result::False);
+	REQUIRE(b->make_entanglement(Sign::O, 2, -2) == Result::False);
+	
 	//make entanglement returns if cycle occured
-	REQUIRE(b->make_entanglement(Sign::X, 0, 1) == false);
-	REQUIRE(b->make_entanglement(Sign::O, 0, 2) == false);
-	REQUIRE(b->make_entanglement(Sign::X, 0, 3) == false);
+	REQUIRE(b->make_entanglement(Sign::X, 0, 1) == Result::True);
+	REQUIRE(b->make_entanglement(Sign::O, 0, 2) == Result::True);
+	REQUIRE(b->make_entanglement(Sign::X, 0, 3) == Result::True);
 
-	REQUIRE(b->make_entanglement(Sign::O, 5, 6) == false);
-	REQUIRE(b->make_entanglement(Sign::X, 5, 7) == false);
-	REQUIRE(b->make_entanglement(Sign::O, 5, 8) == false);
-	
-	
+	REQUIRE(b->make_entanglement(Sign::O, 5, 6) == Result::True);
+	REQUIRE(b->make_entanglement(Sign::X, 5, 7) == Result::True);
+	REQUIRE(b->make_entanglement(Sign::O, 5, 8) == Result::True);
+
 	auto tile0 = b->get_tile(0);
 	auto entanglements0 = tile0->get_entaglements();
 	REQUIRE(b->get_tile(0)->get_entaglements_size() == 3);
@@ -47,13 +51,12 @@ TEST_CASE("structure of graph", "[board]")
 {
 	auto b = set_up_board();
 
-
 	SECTION("graph roots creating")
 	{
 		REQUIRE(b->get_roots().size() == 2);
-		b->make_entanglement(Sign::O, 10, 11);
-		b->make_entanglement(Sign::O, 10, 12);
-		b->make_entanglement(Sign::O, 12, 13);
+		REQUIRE(b->make_entanglement(Sign::O, 10, 11) == Result::True);
+		REQUIRE(b->make_entanglement(Sign::O, 10, 12) == Result::True);
+		REQUIRE(b->make_entanglement(Sign::O, 12, 13) == Result::True);
 		REQUIRE(b->get_roots().size() == 3);
 	}
 
@@ -71,7 +74,8 @@ TEST_CASE("structure of graph", "[board]")
 	{
 		bool ifCycle = b->make_entanglement(Sign::O, 2, 3);
 		REQUIRE(ifCycle == true);
-		b->tile_to_collapse(2);
+		REQUIRE(b->tile_to_collapse(0) == false);
+		REQUIRE(b->tile_to_collapse(2) == true);
 		REQUIRE(b->get_tile(2)->get_root().expired() == true);
 		REQUIRE(b->get_tile(1)->get_root().expired() == true);
 		REQUIRE(b->get_tile(2)->get_root().expired() == true);
@@ -86,17 +90,33 @@ TEST_CASE("structure of graph", "[board]")
 		REQUIRE(b->get_tile(0)->get_const_sign() == Sign::O);
 		REQUIRE(b->get_tile(1)->get_const_sign() == Sign::X);
 		REQUIRE(b->get_tile(3)->get_const_sign() == Sign::X);
-		
 	}
 }
 
+Game setupGame()
+{
+	Game game = Game(1, 5, 2);
+	game.start();
+	return game;
+}
 
 TEST_CASE("making game", "[game]")
 {
 
 	SECTION("game creating")
 	{
-		
+		Game game = Game(1, 5, 2);
+		REQUIRE(game.get_status() == GameStatus::off);
+		game.start();
+		REQUIRE(game.get_status() == GameStatus::ongoing);
+		REQUIRE(game.get_turn() == Sign::X);
+		REQUIRE(game.get_winner() == Sign::None);
+		REQUIRE(game.get_board()->get_size() == 5);
 	}
 
+	SECTION("making moves (cycle)")
+	{
+		Game game = setupGame();
+		game.make_move(Sign::O, 0, 1);
+	}
 }

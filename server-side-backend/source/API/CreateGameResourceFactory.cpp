@@ -1,6 +1,7 @@
 #include "../../headers/API/CreateGameResourceFactory.hpp"
 
 #include <sstream>
+#include <iostream>
 #include <iomanip>
 
 
@@ -23,6 +24,7 @@ shared_ptr<Resource> CreateGameResourceFactory::get_resource() const {
 
 void CreateGameResourceFactory::make_response(const shared_ptr< Session > session, const Bytes & body)
 {
+    std::cout<<"Creating new game."<<std::endl;
     string params = bytes_to_string(body.size(), body.data());
     json json_params = nlohmann::json::parse(params);
 
@@ -30,6 +32,7 @@ void CreateGameResourceFactory::make_response(const shared_ptr< Session > sessio
     int n = json_params.at("boardSize");
 
     shared_ptr<Game> game = games_container->create_game(n, players_number);
+    game->start();
 
     int id = game->get_id();
     int status = game->get_status();
@@ -38,9 +41,12 @@ void CreateGameResourceFactory::make_response(const shared_ptr< Session > sessio
     Sign currPlayer = game->get_turn();
     string board_string = board_json.dump();
 
+
     json response_json = {{"gameId", id}, {"status", status}, {"board", board_json.at("board")}, {"currentPlayer", currPlayer} };
 
     string response = response_json.dump();
+
+    std::cout<<"Response: "<< response << std::endl;
     session->close( OK, response, { { "Content-Length", to_string(response.size()) } } );
 }
 

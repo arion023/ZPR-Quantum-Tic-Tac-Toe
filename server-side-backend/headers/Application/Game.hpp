@@ -16,11 +16,13 @@ public:
 	bool make_move(Sign sign, int tile1_idx, int tile2_idx);
 
 private:
+	bool change_turn();
+	
 	int id;
+	int players;
+	int turn_counter;
 	Status status;
 	Sign game_winner;
-	int players;
 	Sign turn;
 	std::shared_ptr<Board> board;
-	bool change_turn();
 };

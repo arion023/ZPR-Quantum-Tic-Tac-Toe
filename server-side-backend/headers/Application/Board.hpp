@@ -1,8 +1,8 @@
 #pragma once
 
 #include "Entanglement.hpp"
-#include "Tile.hpp"
 #include "Status.hpp"
+#include "Tile.hpp"
 
 #include <sstream>
 
@@ -28,7 +28,7 @@ private:
 	bool cycle_occured;
 	std::shared_ptr<Entanglement> cycle_entanglement;
 	std::unique_ptr<std::shared_ptr<Tile>[]> tiles_table;
-	
+
 	//TODO roots can be removed
 	std::vector<std::shared_ptr<Tile>> complete_graphs_roots;
 

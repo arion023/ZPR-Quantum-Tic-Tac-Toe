@@ -6,6 +6,7 @@ Game::Game(int game_id, int n, int players_number)
 	, status(Status::Off)
 	, game_winner(Sign::None)
 	, turn(Sign::None)
+	, turn_counter(0)
 {
 	board = std::make_shared<Board>(n);
 }
@@ -15,11 +16,13 @@ bool Game::start(Sign starting_sign)
 	//players initialization (optional)
 	status = Status::Ongoing;
 	turn = starting_sign;
+	turn_counter++;
 	return true;
 }
 
 bool Game::change_turn()
 {
+	turn_counter++;
 	turn = (turn == Sign::X) ? Sign::O : Sign::X;
 	return true;
 }

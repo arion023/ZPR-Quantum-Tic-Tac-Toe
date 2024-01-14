@@ -1,8 +1,9 @@
 #include "Entanglement.hpp"
 #include "Tile.hpp"
 
-Entanglement::Entanglement(Sign sign, std::shared_ptr<Tile> tile1, std::shared_ptr<Tile> tile2)
+Entanglement::Entanglement(Sign sign, int number, std::shared_ptr<Tile> tile1, std::shared_ptr<Tile> tile2)
 	: sign(sign)
+	, number(number)
 	, tile1(tile1)
 	, tile2(tile2)
 { }
@@ -13,9 +14,14 @@ void Entanglement::update_entanglements(std::shared_ptr<Entanglement> entangleme
 	tile2.lock()->add_entanglement(entanglement);
 }
 
-Sign Entanglement::get_sign()
+Sign Entanglement::get_sign() const
 {
 	return sign;
+}
+
+int Entanglement::get_number() const
+{
+	return number;
 }
 
 std::shared_ptr<Tile> Entanglement::get_next_tile(std::shared_ptr<Tile> call_tile)

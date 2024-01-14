@@ -5,6 +5,7 @@
 Board::Board(int n)
 	: n(n)
 	, cycle_occured(false)
+	, entanglement_counter(0)
 {
 	tiles_table = std::make_unique<std::shared_ptr<Tile>[]>(pow(n, 2));
 	for(int i = 0; i < pow(n, 2); i++)
@@ -96,8 +97,9 @@ Status Board::make_entanglement(Sign sign, int tile1_idx, int tile2_idx)
 		if(shr_root_t1 == shr_root_t2)
 		{
 			//that means cycle occured
+			entanglement_counter++;
 			cycle_entanglement = std::make_shared<Entanglement>(
-				sign, tiles_table[tile1_idx], tiles_table[tile2_idx]);
+				sign, entanglement_counter, tiles_table[tile1_idx], tiles_table[tile2_idx]);
 
 			cycle_occured = true;
 			return Status::Cycle;
@@ -124,8 +126,9 @@ Status Board::make_entanglement(Sign sign, int tile1_idx, int tile2_idx)
 		complete_graphs_roots.push_back(t1);
 	}
 
+	entanglement_counter++;
 	std::shared_ptr<Entanglement> entanglement =
-		std::make_shared<Entanglement>(sign, tiles_table[tile1_idx], tiles_table[tile2_idx]);
+		std::make_shared<Entanglement>(sign, entanglement_counter, tiles_table[tile1_idx], tiles_table[tile2_idx]);
 
 	entanglement->update_entanglements(entanglement);
 
@@ -139,7 +142,7 @@ bool Board::tile_to_collapse(int tile_idx)
 	if(!tile)
 		return false;
 
-	if(tile != cycle_entanglement->get_tile1() && tile != cycle_entanglement->get_tile2())
+	if((tile != cycle_entanglement->get_tile1() && tile != cycle_entanglement->get_tile2()) || !cycle_occured)
 		return false;
 
 	tile->measurement(cycle_entanglement);

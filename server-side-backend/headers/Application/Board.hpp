@@ -25,6 +25,7 @@ public:
 
 private:
 	int n;
+	int entanglement_counter;
 	bool cycle_occured;
 	std::shared_ptr<Entanglement> cycle_entanglement;
 	std::unique_ptr<std::shared_ptr<Tile>[]> tiles_table;

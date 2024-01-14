@@ -19,6 +19,7 @@ public:
 	std::weak_ptr<Tile> get_root() const;
 	std::vector<Sign> get_signs();
 	Sign get_const_sign() const;
+	int get_idx() const;
 	std::vector<std::shared_ptr<Entanglement>> get_entaglements();
 	int get_entaglements_size();
 

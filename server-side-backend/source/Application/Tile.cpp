@@ -61,6 +61,12 @@ Sign Tile::get_const_sign() const
 	return const_sign;
 }
 
+int Tile::get_idx() const
+{
+	return index;
+}
+
+
 void Tile::set_root(std::shared_ptr<Tile> new_root)
 {
 	root = new_root;

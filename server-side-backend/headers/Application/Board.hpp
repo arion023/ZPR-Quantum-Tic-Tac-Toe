@@ -28,13 +28,14 @@ private:
 	bool cycle_occured;
 	std::shared_ptr<Entanglement> cycle_entanglement;
 	std::unique_ptr<std::shared_ptr<Tile>[]> tiles_table;
+	
 	//TODO roots can be removed
 	std::vector<std::shared_ptr<Tile>> complete_graphs_roots;
 
 	void collapse_cycle(std::shared_ptr<Entanglement>, std::shared_ptr<Tile> parent) const;
-	void rebase_cycle(std::shared_ptr<Tile> root, std::shared_ptr<Tile> new_root);
+	bool rebase_cycle(std::shared_ptr<Tile> root, std::shared_ptr<Tile> new_root);
 	//TODO roots can be removed
-	void remove_graph_root(std::shared_ptr<Tile> root);
+	bool remove_graph_root(std::shared_ptr<Tile> root);
 	void change_childrens_root(std::shared_ptr<Tile> excluded_tile,
 							   std::shared_ptr<Tile> parent,
 							   std::shared_ptr<Tile> root);

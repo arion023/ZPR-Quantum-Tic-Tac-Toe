@@ -27,44 +27,39 @@ bool Game::change_turn()
 bool Game::make_move(Sign sign, int tile1_idx, int tile2_idx)
 {
 	//check if correct player is making move
-	if((status!=Status::Ongoing && status == Status::Cycle) || sign != turn)
+	if(sign != turn)
 	{
 		return false;
 	}
 
 	//-1 means operation of choosing tile to collapse
-	if(tile2_idx == -1)
+	if(status == Status::Cycle && tile2_idx == -1)
 	{
-		if(status == Status::Cycle)
+		//move to make collapse
+		if(board->tile_to_collapse(tile1_idx))
 		{
-
-			//move to make collapse
-			//TODO handling if inccorect tile is passed
-			if(board->tile_to_collapse(tile1_idx))
+			status = Status::Ongoing;
+			Sign winner = board->check_for_winner();
+			if(winner != Sign::None)
 			{
-				status = Status::Ongoing;
-				Sign winner = board->check_for_winner();
-				if(winner != Sign::None)
-				{
-					game_winner = winner;
-					status = Status::Finished;
-				}
+				game_winner = winner;
+				status = Status::Finished;
 			}
-			else
-				return false;
 		}
 		else
-		{
 			return false;
-		}
 	}
-	else
+	else if(status == Status::Ongoing)
 	{
 		Status result = board->make_entanglement(sign, tile1_idx, tile2_idx);
 		if(result == Status::False)
 			return false;
 		else
 			status = result;
+	}
+	else
+	{
+		return false;
 	}
 
 	change_turn();

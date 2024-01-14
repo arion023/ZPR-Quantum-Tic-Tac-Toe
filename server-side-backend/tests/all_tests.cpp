@@ -61,8 +61,8 @@ TEST_CASE("structure of graph", "[board]")
 
 	SECTION("graph rebase root")
 	{
-		b->make_entanglement(Sign::O, 0, 5);
-		REQUIRE(b->get_roots().size() == 2);
+		REQUIRE(b->make_entanglement(Sign::O, 0, 5) == Status::True);
+		REQUIRE(b->get_roots().size() == 1);
 		REQUIRE(b->get_tile(5)->get_root().lock() == b->get_tile(0));
 		REQUIRE(b->get_tile(6)->get_root().lock() == b->get_tile(0));
 		REQUIRE(b->get_tile(7)->get_root().lock() == b->get_tile(0));
@@ -71,8 +71,7 @@ TEST_CASE("structure of graph", "[board]")
 
 	SECTION("make cycle")
 	{
-		bool ifCycle = b->make_entanglement(Sign::O, 2, 3);
-		REQUIRE(ifCycle == true);
+		REQUIRE(b->make_entanglement(Sign::O, 2, 3) == Status::Cycle);
 		REQUIRE(b->tile_to_collapse(0) == false);
 		REQUIRE(b->tile_to_collapse(2) == true);
 		REQUIRE(b->get_tile(2)->get_root().expired() == true);
@@ -99,27 +98,6 @@ Game setupGame()
 	return game;
 }
 
-Game setup()
-{
-	Game game = Game(1, 5, 2);
-	game.start();
-
-	game.make_move(Sign::O, 0, 1);
-	game.make_move(Sign::X, 0, 0);
-	game.make_move(Sign::X, -1, 0);
-	game.make_move(Sign::X, 0, 25);
-	game.make_move(Sign::X, 0, -1);
-	game.make_move(Sign::X, 0, 1);
-
-	game.make_move(Sign::X, 1, 0);
-	game.make_move(Sign::O, 1, 2);
-	game.make_move(Sign::X, 2, 3);
-	game.make_move(Sign::O, 5, 6);
-	game.make_move(Sign::X, 7, 8);
-	game.make_move(Sign::O, 8, 1);
-
-	return game;
-}
 
 TEST_CASE("making game", "[game]")
 {
@@ -139,7 +117,7 @@ TEST_CASE("making game", "[game]")
 
 	SECTION("making moves")
 	{
-		Game game = setupGame();
+		Game game = Game(1, 5, 2);
 		game.start();
 		//invalid sign
 		REQUIRE(game.make_move(Sign::O, 0, 1) == false);
@@ -157,17 +135,35 @@ TEST_CASE("making game", "[game]")
 		//invalid sign
 		REQUIRE(game.make_move(Sign::X, 1, 0) == false);
 		//correct move
+		REQUIRE(game.get_board()->get_roots().size() == 1);
 		REQUIRE(game.make_move(Sign::O, 1, 2) == true);
 		REQUIRE(game.make_move(Sign::X, 2, 3) == true);
 		REQUIRE(game.make_move(Sign::O, 5, 6) == true);
-		REQUIRE(game.make_move(Sign::X, 7, 8) == true);
-		REQUIRE(game.make_move(Sign::O, 8, 1) == true);
+		REQUIRE(game.make_move(Sign::X, 6, 7) == true);
+		REQUIRE(game.get_board()->get_roots().size() == 2);
+		REQUIRE(game.make_move(Sign::O, 7, 0) == true);
+		REQUIRE(game.get_board()->get_roots().size() == 1);
 	}
 
 	SECTION("creating cycle")
 	{
 		Game game = setupGame();
-		//invalid sign
+		REQUIRE(game.make_move(Sign::X, 0, 1) == true);
+		REQUIRE(game.make_move(Sign::O, 0, 2) == true);
+		REQUIRE(game.make_move(Sign::X, 4, 5) == true);
+		REQUIRE(game.make_move(Sign::O, 0, 4) == true);
+		REQUIRE(game.make_move(Sign::X, 5, 2) == true);
+		REQUIRE(game.get_turn() == Sign::O);
+		REQUIRE(game.get_status() == Status::Cycle);
+		//cannot make normal move thus waiting for selectiong collapsing tile 
+		REQUIRE(game.make_move(Sign::O, 10, 11) == false);
+		//invalid move
+		REQUIRE(game.make_move(Sign::O, -1, 10) == false);
+		//invalid collapsing tile
+		REQUIRE(game.make_move(Sign::O, 1, -1) == false);
+		//correct collapsing tile
+		REQUIRE(game.make_move(Sign::O, 2, -1) == true);
+		REQUIRE(game.get_status() == Status::Ongoing);
 	}
 
 	SECTION("game finishing")

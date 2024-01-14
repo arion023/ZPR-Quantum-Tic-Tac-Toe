@@ -33,11 +33,13 @@ std::shared_ptr<Tile> Board::get_tile(int i) const
 	return tiles_table[i];
 }
 
-void Board::rebase_cycle(std::shared_ptr<Tile> root, std::shared_ptr<Tile> new_root)
+bool Board::rebase_cycle(std::shared_ptr<Tile> root, std::shared_ptr<Tile> new_root)
 {
+
 	remove_graph_root(root);
 	root->set_root(new_root);
 	change_childrens_root(root, root, new_root);
+	return true;
 }
 
 void Board::change_childrens_root(std::shared_ptr<Tile> excluded_tile,
@@ -55,15 +57,19 @@ void Board::change_childrens_root(std::shared_ptr<Tile> excluded_tile,
 	}
 }
 
-void Board::remove_graph_root(std::shared_ptr<Tile> root)
+bool Board::remove_graph_root(std::shared_ptr<Tile> root)
 {
-	//delete root from set of complete cycles
-	for(auto roots_iter = complete_graphs_roots.begin(); roots_iter < complete_graphs_roots.end();
-		roots_iter++)
+	int i = 0;
+	for(auto tile : complete_graphs_roots)
 	{
-		if(*roots_iter == root)
-			complete_graphs_roots.erase(roots_iter);
+		if(tile == root)
+		{
+			complete_graphs_roots.erase(complete_graphs_roots.begin() + i);
+			return true;
+		}
+		i++;
 	}
+	return false;
 }
 
 //returns if cycle occured
@@ -111,10 +117,11 @@ Status Board::make_entanglement(Sign sign, int tile1_idx, int tile2_idx)
 	}
 	else
 	{
-		get_tile(tile1_idx)->set_root(get_tile(tile1_idx));
-		get_tile(tile2_idx)->set_root(get_tile(tile1_idx));
-
-		complete_graphs_roots.push_back(root_t1.lock());
+		std::shared_ptr<Tile> t1 = get_tile(tile1_idx);
+		std::shared_ptr<Tile> t2 = get_tile(tile2_idx);
+		t1->set_root(t1);
+		t2->set_root(t1);
+		complete_graphs_roots.push_back(t1);
 	}
 
 	std::shared_ptr<Entanglement> entanglement =

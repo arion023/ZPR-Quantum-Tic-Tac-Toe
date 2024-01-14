@@ -2,23 +2,27 @@
 
 #include "Board.hpp"
 
+class Game
+{
+public:
+	Game(int game_id, int n, int players_number);
+	int get_id();
+	int get_status();
+	Sign get_turn();
+	Sign get_winner();
+	std::shared_ptr<Board> get_board();
 
-class Game {
-    public:
-        Game(int game_id, int n, int players_number);
-        int get_id();
-        int get_status();
-        Sign get_turn();
-        bool change_turn();
-        std::shared_ptr<Board> get_board();
+	bool start(Sign starting_sign = Sign::X);
+	bool make_move(Sign sign, int tile1_idx, int tile2_idx);
 
-        bool start();
-        bool make_move(Sign sign, int tile1_idx, int tile2_idx);
-
-    private:
-        int id;
-        int status = 0;
-        int players = 0;
-        Sign turn = Sign(0);
-        std::shared_ptr<Board> board;
+private:
+	bool change_turn();
+	
+	int id;
+	int players;
+	int turn_counter;
+	Status status;
+	Sign game_winner;
+	Sign turn;
+	std::shared_ptr<Board> board;
 };

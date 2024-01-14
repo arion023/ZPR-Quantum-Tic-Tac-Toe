@@ -1,28 +1,39 @@
 #pragma once
 
-#include "Sign.hpp"
 #include "../json.hpp"
+#include "Sign.hpp"
+#include <memory>
 #include <string>
 #include <vector>
-#include <memory>
 
 class Entanglement;
 
 using nlohmann::json;
 
-class Tile {
-    public:
-        Tile(int idx);
-        bool add_entanglement(std::shared_ptr<Entanglement>);
-        std::vector<Sign> get_signs();
+class Tile
+{
+public:
+	Tile(int idx);
+	bool add_entanglement(std::shared_ptr<Entanglement>);
+	bool measurement(std::shared_ptr<Entanglement> collapsing_entanglement);
+	std::weak_ptr<Tile> get_root() const;
+	std::vector<Sign> get_signs();
+	Sign get_const_sign() const;
+	int get_idx() const;
+	std::vector<std::shared_ptr<Entanglement>> get_entaglements();
+	int get_entaglements_size();
 
-        json to_json();
+	json to_json();
 
-        friend std::ostream& operator<<(std::ostream& stream, Tile& tile);
+	void set_root(std::shared_ptr<Tile> new_root);
 
-    private:
-        int index;
-        Sign const_sign;
-        std::vector<std::shared_ptr<Entanglement>> entanglements;
 
+	friend bool operator==(const Tile &t1, const Tile &t2);
+	friend std::ostream& operator<<(std::ostream& stream, Tile& tile);
+
+private:
+	int index;
+	Sign const_sign;
+	std::weak_ptr<Tile> root;
+	std::vector<std::shared_ptr<Entanglement>> entanglements;
 };

@@ -1,4 +1,4 @@
-#include "../../headers/Application/GamesContainer.hpp"
+#include "GamesContainer.hpp"
 
 GamesContainer::GamesContainer()
 	: games_counter(0){};

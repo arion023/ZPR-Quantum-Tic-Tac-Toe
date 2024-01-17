@@ -24,6 +24,7 @@ std::vector<std::shared_ptr<Tile>> Board::get_roots() const
 	return complete_graphs_roots;
 }
 
+
 std::shared_ptr<Tile> Board::get_tile(int i) const
 {
 	if(i >= n * n || i < 0)
@@ -162,8 +163,9 @@ json Board::to_json()
 	json board_json;
 	for(int i = 0; i < pow(n, 2); i++)
 	{
-		board_json["board"][std::to_string(i)] = tiles_table[i]->to_json();
+		board_json[std::to_string(i)] = get_tile(i)->to_json();
 	}
+
 	return board_json;
 }
 

@@ -8,7 +8,7 @@
 
 class Entanglement;
 
-using nlohmann::json;
+using json = nlohmann::ordered_json;
 
 class Tile
 {

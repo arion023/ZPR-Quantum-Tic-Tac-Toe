@@ -93,3 +93,14 @@ std::shared_ptr<Board> Game::get_board()
 {
 	return board;
 }
+
+json Game::to_json()
+{
+	json game_json;
+	game_json["gameId"] = id;
+	game_json["status"] = game_status_to_string(status);
+	game_json["currentPlayer"] = sign_to_string(turn);
+	game_json["board"] = board->to_json();
+
+	return game_json;
+}

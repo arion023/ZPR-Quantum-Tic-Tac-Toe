@@ -80,14 +80,12 @@ std::weak_ptr<Tile> Tile::get_root() const
 json Tile::to_json()
 {
 	json tile_json;
-	std::vector<Sign> signs = get_signs();
-	tile_json["ConstSign"] = signs.at(0);
+	std::vector<std::shared_ptr<Entanglement>> entanglements = get_entaglements();
+	tile_json["sign"] = sign_to_string(const_sign);
 
-	int counter = 0;
-	for(std::vector<Sign>::iterator i = signs.begin() + 1; i != signs.end(); i++)
+	for(auto e : entanglements)
 	{
-		tile_json["Entanglement"][std::to_string(counter)] = *i;
-		counter++;
+		tile_json["entanglements"][e->get_number()] =  sign_to_string(e->get_sign());
 	}
 
 	return tile_json;

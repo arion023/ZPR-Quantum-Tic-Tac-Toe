@@ -6,7 +6,6 @@
 
 #include <string>
 
-using nlohmann::json;
 
 class CreateGameResourceFactory : public IResourceFactory {
 

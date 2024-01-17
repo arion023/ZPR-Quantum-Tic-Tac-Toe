@@ -34,15 +34,7 @@ void CreateGameResourceFactory::make_response(const shared_ptr< Session > sessio
     shared_ptr<Game> game = games_container->create_game(n, players_number);
     game->start();
 
-    int id = game->get_id();
-    int status = game->get_status();
-    shared_ptr<Board> board = game->get_board();
-    json board_json = board->to_json();
-    Sign currPlayer = game->get_turn();
-    string board_string = board_json.dump();
-
-
-    json response_json = {{"gameId", id}, {"status", status}, {"board", board_json.at("board")}, {"currentPlayer", currPlayer} };
+    json response_json = game->to_json();
 
     string response = response_json.dump();
 

@@ -6,8 +6,6 @@
 
 #include <string>
 
-using nlohmann::json;
-
 class MakeMoveResourceFactory : public IResourceFactory {
 
     public:

@@ -1,6 +1,7 @@
 #include "../../headers/API/MakeMoveResourceFactory.hpp"
 
 #include <iomanip>
+#include <iostream>
 #include <sstream>
 
 //TODO: move this to another place and maybe change on to_string method
@@ -62,6 +63,7 @@ void MakeMoveResourceFactory::make_response(const shared_ptr<Session> session, c
 		{"status", status}, {"board", board_json.at("board")}, {"currentPlayer", currPlayer}};
 
 	string response = response_json.dump();
+	std::cout << "Response: " << response << std::endl;
 	session->close(OK, response, {{"Content-Length", to_string(response.size())}});
 }
 

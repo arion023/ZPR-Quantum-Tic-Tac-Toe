@@ -67,7 +67,7 @@ int Tile::get_idx() const
 }
 
 
-void Tile::set_root(std::shared_ptr<Tile> new_root)
+void Tile::set_root(std::weak_ptr<Tile> new_root)
 {
 	root = new_root;
 }

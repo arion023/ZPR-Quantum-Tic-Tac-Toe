@@ -25,7 +25,7 @@ public:
 
 	json to_json();
 
-	void set_root(std::shared_ptr<Tile> new_root);
+	void set_root(std::weak_ptr<Tile> new_root);
 
 
 	friend bool operator==(const Tile &t1, const Tile &t2);

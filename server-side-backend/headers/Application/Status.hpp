@@ -18,7 +18,7 @@ inline std::string game_status_to_string(Status s)
         case Status::Off:
             return "off";
         case Status::Ongoing:
-            return "ongoging";
+            return "ongoing";
         case Status::Cycle:
             return "cycle";
         case Status::Stopped:

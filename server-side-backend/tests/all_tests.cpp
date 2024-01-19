@@ -166,6 +166,27 @@ TEST_CASE("making game", "[game]")
 		REQUIRE(game.get_status() == Status::Ongoing);
 	}
 
+
+	SECTION("creating cycle 2")
+	{
+		Game game = setupGame();
+		REQUIRE(game.make_move(Sign::X, 0, 1) == true);
+		REQUIRE(game.make_move(Sign::O, 1, 6) == true);
+		REQUIRE(game.make_move(Sign::X, 6, 0) == true);
+		REQUIRE(game.get_turn() == Sign::O);
+		REQUIRE(game.get_status() == Status::Cycle);
+		//cannot make normal move thus waiting for selectiong collapsing tile 
+		REQUIRE(game.make_move(Sign::O, 10, 11) == false);
+		//invalid move
+		REQUIRE(game.make_move(Sign::O, -1, 10) == false);
+		//invalid collapsing tile
+		REQUIRE(game.make_move(Sign::O, 1, -1) == false);
+		//correct collapsing tile
+		REQUIRE(game.make_move(Sign::O, 6, -1) == true);
+		REQUIRE(game.get_status() == Status::Ongoing);
+	}
+
+
 	SECTION("game finishing")
 	{
 		//TODO

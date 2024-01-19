@@ -91,7 +91,6 @@ Status Board::make_entanglement(Sign sign, int tile1_idx, int tile2_idx)
 	{
 		return Status::False;
 	}
-
 	//check if this entaglement is connected with any graph
 	std::weak_ptr<Tile> root_t1 = get_tile(tile1_idx)->get_root();
 	std::weak_ptr<Tile> root_t2 = get_tile(tile2_idx)->get_root();
@@ -100,6 +99,7 @@ Status Board::make_entanglement(Sign sign, int tile1_idx, int tile2_idx)
 	{
 		std::shared_ptr<Tile> shr_root_t1 = root_t1.lock();
 		std::shared_ptr<Tile> shr_root_t2 = root_t2.lock();
+		std::cout<<"Making entaglement root1: " << shr_root_t1->get_idx() <<"\t root t2: " << shr_root_t2->get_idx() << std::endl;
 		if(shr_root_t1 == shr_root_t2)
 		{
 			//that means cycle occured
@@ -117,11 +117,11 @@ Status Board::make_entanglement(Sign sign, int tile1_idx, int tile2_idx)
 	}
 	else if(!root_t1.expired())
 	{
-		tiles_table[tile2_idx]->set_root(get_tile(tile1_idx));
+		get_tile(tile2_idx)->set_root(get_tile(tile1_idx)->get_root());
 	}
 	else if(!root_t2.expired())
 	{
-		get_tile(tile1_idx)->set_root(get_tile(tile2_idx));
+		get_tile(tile1_idx)->set_root(get_tile(tile2_idx)->get_root());
 	}
 	else
 	{

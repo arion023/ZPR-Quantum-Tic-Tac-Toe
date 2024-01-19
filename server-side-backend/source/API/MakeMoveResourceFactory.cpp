@@ -40,9 +40,10 @@ int MakeMoveResourceFactory::get_game_id(const shared_ptr<Session> session)
 
 void MakeMoveResourceFactory::make_response(const shared_ptr<Session> session, const Bytes& body)
 {
+	std::cout << "Make move" << std::endl;
 	string params = bytes_to_string(body.size(), body.data());
 	json json_params = nlohmann::json::parse(params);
-
+	cout<< "params: " << params << endl;
 	Sign player = json_params.at("player");
 	int tile_idx1 = json_params.at("idx1");
 	int tile_idx2 = json_params.at("idx2");
@@ -51,16 +52,9 @@ void MakeMoveResourceFactory::make_response(const shared_ptr<Session> session, c
 
 	shared_ptr<Game> game = games_container->get_game(id);
 
-	game->make_move(player, tile_idx1, tile_idx2);
-
-	int status = game->get_status();
-	shared_ptr<Board> board = game->get_board();
-	json board_json = board->to_json();
-	Sign currPlayer = game->get_turn();
-	string board_string = board_json.dump();
-
-	json response_json = {
-		{"status", status}, {"board", board_json.at("board")}, {"currentPlayer", currPlayer}};
+	bool result = game->make_move(player, tile_idx1, tile_idx2);
+	cout << "move result: " << result << endl;
+	json response_json = game->to_json();
 
 	string response = response_json.dump();
 	std::cout << "Response: " << response << std::endl;

@@ -2,9 +2,9 @@
 #include <string>
 
 enum Sign{
-    None = -1,
-    X = 0,
-    O = 1
+    None = 0,
+    X = 1,
+    O = 2
 };
 
 inline std::string sign_to_string(Sign s)

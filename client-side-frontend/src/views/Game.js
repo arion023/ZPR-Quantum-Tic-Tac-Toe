@@ -8,26 +8,54 @@ import { useState, useEffect } from "react";
 
 function Game( props ) {
 
+    const location = useLocation();
+    const [boardAction, setBoardAction] = useState([]);
+
+    const {gameId} = useParams();
+
+    let tmpBoard = []
+    if(location.state != null)
+    {
+        console.log("init parse board")
+        tmpBoard=parseBoard(location.state.board);
+    }
+    const [boardState, setBoard] = useState(tmpBoard);
+    const [player, setPlayer] = useState(location.state.currentPlayer);
+    
+
+    function reload()
+    {
+        //TODO auto reload
+        getBoard();
+    }
+
     function parseBoard(boardDict)
     {
         var newBoard = new Array();
-        for(let i=0; i < Object.keys(boardDict).length; i++)
+        console.log("boardDict")
+        console.log(boardDict)
+        for(let i in boardDict)
         {
-            if (boardDict[i].Entanglement != null)
+            if (boardDict[i].entanglements != null)
             {
+                console.log("boardDict")
+                console.log(boardDict)
+            
                 let signs = ""
-                for(let v of Object.values(boardDict[i].Entanglement))
+                let ent = boardDict[i].entanglements
+                for(let e_id in ent)
                 {
-                    signs+=v;
+                    signs+=ent[e_id] + e_id + " ";
                 }
                 newBoard.push(signs)
             }
             else
             {
-                newBoard.push(boardDict[i].ConstSign.toString());
+                newBoard.push(boardDict[i].sign);
             }
         }
-        console.log(newBoard);
+        //console.log("board");
+        //console.log(newBoard);
         return newBoard;
     }
 
@@ -44,34 +72,14 @@ function Game( props ) {
         })
     }
 
-
-    const location = useLocation();
-    const [boardAction, setBoardAction] = useState([]);
-
-    const {gameId} = useParams();
-
-
-    let board=[ " " ];
-    let tmpPlayer="X";
-    if(location.state != null)
-    {
-        board=parseBoard(location.state.board);
-        tmpPlayer = location.state.currPlayer === 1 ? "X" : "O";
-    }
-    const [boardState, setBoard] = useState(board);
-    const [player, setPlayer] = useState(tmpPlayer);
-    function reload(setBoard)
-    {
-        //TODO auto reload
-        getBoard();
-    }
-
     function make_move()
     {
         if(boardAction.length != 2)
             alert("Invalid move!");
         else
         {
+            console.log("response");
+
             //TODO: error handling
             axios.post('/games/'+gameId+'/MakeMove', {
                 player: (player === "X") ? 1 : 2,
@@ -79,11 +87,14 @@ function Game( props ) {
                 idx2: boardAction[1]
                   })
                   .then(function (response) {
-                    setBoard(parseBoard(response.data.board))
+                    let tmpBoard = response.data.board
+                    setBoard(parseBoard(tmpBoard))
+                    console.log("response");
+                    console.log(response.data);
+                    console.log("board");
+                    console.log(tmpBoard);
                     setBoardAction([])
-                    let tmpPlayer = response.data.currentPlayer == "1" ? "X" : "O";
-                    setPlayer(tmpPlayer);
-                    console.log(response);
+                    setPlayer(response.data.currentPlayer);
                   })
                   .catch(function (error) {
                     console.log(error);

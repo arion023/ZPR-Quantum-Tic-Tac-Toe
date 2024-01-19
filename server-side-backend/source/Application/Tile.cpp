@@ -85,7 +85,7 @@ json Tile::to_json()
 
 	for(auto e : entanglements)
 	{
-		tile_json["entanglements"][e->get_number()] =  sign_to_string(e->get_sign());
+		tile_json["entanglements"][std::to_string(e->get_number())] =  sign_to_string(e->get_sign());
 	}
 
 	return tile_json;

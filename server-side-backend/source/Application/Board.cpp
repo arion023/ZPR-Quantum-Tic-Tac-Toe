@@ -74,6 +74,11 @@ bool Board::remove_graph_root(std::shared_ptr<Tile> root)
 	return false;
 }
 
+std::shared_ptr<Entanglement> Board::get_cycle_entanglement() const
+{
+	return cycle_entanglement;
+}
+
 //returns if cycle occured
 Status Board::make_entanglement(Sign sign, int tile1_idx, int tile2_idx)
 {

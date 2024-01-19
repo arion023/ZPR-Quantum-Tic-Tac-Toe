@@ -17,10 +17,11 @@ public:
 
 	int get_size() const;
 	std::vector<std::shared_ptr<Tile>> get_roots() const;
+	std::shared_ptr<Tile> get_tile(int i) const;
+	std::shared_ptr<Entanglement> get_cycle_entanglement() const;
+
 
 	json to_json();
-
-	std::shared_ptr<Tile> get_tile(int i) const;
 	friend std::ostream& operator<<(std::ostream& out, const Board& board);
 
 private:

@@ -101,6 +101,10 @@ json Game::to_json()
 	game_json["status"] = game_status_to_string(status);
 	game_json["currentPlayer"] = sign_to_string(turn);
 	game_json["board"] = board->to_json();
-
+	if(status == Status::Cycle)
+	{
+		game_json["cycle"] = { board->get_cycle_entanglement()->get_tile1()->get_idx(),
+							   board->get_cycle_entanglement()->get_tile2()->get_idx() };
+	}
 	return game_json;
 }

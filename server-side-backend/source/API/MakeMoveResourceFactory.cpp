@@ -44,7 +44,7 @@ void MakeMoveResourceFactory::make_response(const shared_ptr<Session> session, c
 	string params = bytes_to_string(body.size(), body.data());
 	json json_params = nlohmann::json::parse(params);
 	cout<< "params: " << params << endl;
-	Sign player = json_params.at("player");
+	Sign player = string_to_sign(json_params.at("player"));
 	int tile_idx1 = json_params.at("idx1");
 	int tile_idx2 = json_params.at("idx2");
 

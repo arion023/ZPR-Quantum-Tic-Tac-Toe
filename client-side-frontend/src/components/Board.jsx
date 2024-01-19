@@ -2,33 +2,33 @@ import { click } from "@testing-library/user-event/dist/click";
 import axios from "axios";
 import { useEffect } from "react";
 
-function Board( {board, boardAction, setMove, playerSign} ) {
+function Board( {board, move, setMove, playerSign} ) {
 
     const n = Math.sqrt(board.length);
     let tmpBoard = board.slice();
 
     function markTile(idx)
     {
-        console.log(boardAction);
-        if( boardAction.length === 0)
+        console.log(move);
+        if( move.length === 0)
         {
             setMove([ idx ]);
         }
-        else if(boardAction.length === 1)
+        else if(move.length === 1)
         {
-            if(boardAction.includes(idx))
+            if(move.includes(idx))
             {
                 setMove([]);
             }
             else
             {
-                let tmpBoardAction = boardAction.slice();
-                tmpBoardAction.push(idx);
-                setMove(tmpBoardAction);
+                let tmpmove = move.slice();
+                tmpmove.push(idx);
+                setMove(tmpmove);
             }
         } else
         {
-            if(boardAction.includes(idx))
+            if(move.includes(idx))
             {
                 setMove([]);
             }
@@ -37,7 +37,7 @@ function Board( {board, boardAction, setMove, playerSign} ) {
 
     function renderTile(idx)
     {
-        if( boardAction.includes(idx) )
+        if( move.includes(idx) )
         {
             return board[idx] + playerSign;
         }

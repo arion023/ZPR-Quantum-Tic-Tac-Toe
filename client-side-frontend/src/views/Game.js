@@ -11,25 +11,32 @@ function Game( props ) {
     console.log("redner")
 
     const location = useLocation();
-    const [boardAction, setMove ] = useState([]);
 
     const {gameId} = useParams();
-
-
+    
+    const [response, setResponse] = useState("None");
     const [boardState, setBoard] = useState([["Error"]]);
-    const [player, setPlayer] = useState('X');
-
-    useEffect(() => { 
-        console.log("")
-        getBoard(); 
-    }, [])
-
+    const [gameStatus, setGameStatus] = useState("Off");
+    const [player, setPlayer] = useState('-');
+    
+    const [move, setMove ] = useState([]);
+    
+    //
     useEffect(() => { 
         console.log("onMount")
-        getBoard(); 
+        getGame(); 
     }, [])
 
-
+    //update response
+    useEffect(() => {
+        if(response != "None")
+        {
+            setBoard(parseBoard(response.data.board));
+            setPlayer(response.data.currentPlayer);
+            setGameStatus(response.data.status);
+            setMove([])
+        }       
+    }, [response])
     
 
     function parseBoard(boardDict)
@@ -58,11 +65,11 @@ function Game( props ) {
         return newBoard;
     }
 
-    function getBoard() {
+    function getGame() {
         axios.get('/get_game/' + gameId)
         .then(function (response) {
             // handle success
-            setBoard(parseBoard(response.data.board))
+            setResponse(response);
         })
         .catch(function (error) {
            // TODO
@@ -70,9 +77,9 @@ function Game( props ) {
         })
     }
 
-    function make_move()
+    function postMove()
     {
-        if(boardAction.length != 2)
+        if(move.length != 2)
             alert("Invalid move!");
         else
         {
@@ -80,19 +87,12 @@ function Game( props ) {
 
             //TODO: error handling
             axios.post('/games/'+gameId+'/MakeMove', {
-                player: (player === "X") ? 1 : 2,
-                idx1: boardAction[0],
-                idx2: boardAction[1]
+                player: player,
+                idx1: move[0],
+                idx2: move[1]
                   })
                   .then(function (response) {
-                    let tmpBoard = response.data.board;
-                    setBoard(parseBoard(tmpBoard));
-                    console.log("response");
-                    console.log(response.data);
-                    console.log("board");
-                    console.log(tmpBoard);
-                    setMove([])
-                    setPlayer(response.data.currentPlayer);
+                    setResponse(response);
                   })
                   .catch(function (error) {
                     console.log(error);
@@ -106,12 +106,12 @@ function Game( props ) {
         <div className='App Game'>
             <h1>Game ID: {gameId} </h1>
             <h2>turn = {player}</h2>
-            <h2>status = {player}</h2>
+            <h2>status = {gameStatus}</h2>
             <div className="container">
-                <Board board={boardState} boardAction={boardAction} setMove={setMove } playerSign={player} />
+                <Board board={boardState} move={move} setMove={setMove} playerSign={player} />
             </div>
             <div className="container">
-                <button id="make-move" onClick={() => make_move()} className="btn btn-outline-warning btn-lg">Make move</button>
+                <button id="make-move" onClick={() => postMove()} className="btn btn-outline-warning btn-lg">Make move</button>
             </div>
         </div>
     )

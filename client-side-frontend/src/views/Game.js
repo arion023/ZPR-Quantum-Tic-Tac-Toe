@@ -8,26 +8,29 @@ import { useState, useEffect } from "react";
 
 function Game( props ) {
 
+    console.log("redner")
+
     const location = useLocation();
-    const [boardAction, setBoardAction] = useState([]);
+    const [boardAction, setMove ] = useState([]);
 
     const {gameId} = useParams();
 
-    let tmpBoard = []
-    if(location.state != null)
-    {
-        console.log("init parse board")
-        tmpBoard=parseBoard(location.state.board);
-    }
-    const [boardState, setBoard] = useState(tmpBoard);
-    const [player, setPlayer] = useState(location.state.currentPlayer);
-    
 
-    function reload()
-    {
-        //TODO auto reload
-        getBoard();
-    }
+    const [boardState, setBoard] = useState([["Error"]]);
+    const [player, setPlayer] = useState('X');
+
+    useEffect(() => { 
+        console.log("")
+        getBoard(); 
+    }, [])
+
+    useEffect(() => { 
+        console.log("onMount")
+        getBoard(); 
+    }, [])
+
+
+    
 
     function parseBoard(boardDict)
     {
@@ -38,8 +41,6 @@ function Game( props ) {
         {
             if (boardDict[i].entanglements != null)
             {
-                console.log("boardDict")
-                console.log(boardDict)
             
                 let signs = ""
                 let ent = boardDict[i].entanglements
@@ -54,13 +55,10 @@ function Game( props ) {
                 newBoard.push(boardDict[i].sign);
             }
         }
-        //console.log("board");
-        //console.log(newBoard);
         return newBoard;
     }
 
-    function getBoard()
-    {
+    function getBoard() {
         axios.get('/get_game/' + gameId)
         .then(function (response) {
             // handle success
@@ -87,13 +85,13 @@ function Game( props ) {
                 idx2: boardAction[1]
                   })
                   .then(function (response) {
-                    let tmpBoard = response.data.board
-                    setBoard(parseBoard(tmpBoard))
+                    let tmpBoard = response.data.board;
+                    setBoard(parseBoard(tmpBoard));
                     console.log("response");
                     console.log(response.data);
                     console.log("board");
                     console.log(tmpBoard);
-                    setBoardAction([])
+                    setMove([])
                     setPlayer(response.data.currentPlayer);
                   })
                   .catch(function (error) {
@@ -107,15 +105,13 @@ function Game( props ) {
     return (
         <div className='App Game'>
             <h1>Game ID: {gameId} </h1>
-            <h2>PLAYER = {player}</h2>
+            <h2>turn = {player}</h2>
+            <h2>status = {player}</h2>
             <div className="container">
-                <Board board={boardState} boardAction={boardAction} setBoardAction={setBoardAction} playerSign={player} />
+                <Board board={boardState} boardAction={boardAction} setMove={setMove } playerSign={player} />
             </div>
             <div className="container">
                 <button id="make-move" onClick={() => make_move()} className="btn btn-outline-warning btn-lg">Make move</button>
-            </div>
-            <div className="container">
-                <button onClick={() => reload(setBoard)} className="btn btn-danger btn-lg">Reload</button>
             </div>
         </div>
     )

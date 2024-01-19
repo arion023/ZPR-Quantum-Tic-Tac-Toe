@@ -2,60 +2,35 @@ import { click } from "@testing-library/user-event/dist/click";
 import axios from "axios";
 import { useEffect } from "react";
 
-function Board( {board, boardAction, setBoardAction, playerSign} ) {
+function Board( {board, boardAction, setMove, playerSign} ) {
 
     const n = Math.sqrt(board.length);
     let tmpBoard = board.slice();
-
-    function convertToSigns(numbers)
-    {
-        var signs = new String();
-        for(let i of numbers)
-        {
-            if(i==0)
-            {
-                signs="-";
-            }
-            else if(i==1)
-            {
-                signs+=("X");
-            }
-            else if (i==2)
-            {
-                signs+=("O")
-            }
-            else
-            {
-                signs+=("E:"+i);
-            }
-        }
-        return signs
-    }
 
     function markTile(idx)
     {
         console.log(boardAction);
         if( boardAction.length === 0)
         {
-            setBoardAction([ idx ]);
+            setMove([ idx ]);
         }
         else if(boardAction.length === 1)
         {
             if(boardAction.includes(idx))
             {
-                setBoardAction([]);
+                setMove([]);
             }
             else
             {
                 let tmpBoardAction = boardAction.slice();
                 tmpBoardAction.push(idx);
-                setBoardAction(tmpBoardAction);
+                setMove(tmpBoardAction);
             }
         } else
         {
             if(boardAction.includes(idx))
             {
-                setBoardAction([]);
+                setMove([]);
             }
         }
     };
@@ -64,9 +39,9 @@ function Board( {board, boardAction, setBoardAction, playerSign} ) {
     {
         if( boardAction.includes(idx) )
         {
-            return (convertToSigns(board[idx]) + playerSign);
+            return board[idx] + playerSign;
         }
-        return convertToSigns(board[idx])
+        return board[idx];
     };
 
     function renderRow(rowTiles, row)

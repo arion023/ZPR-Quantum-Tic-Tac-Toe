@@ -2,6 +2,7 @@
 
 #include <sstream>
 #include <iomanip>
+#include <iostream>
 
 GameResourceFactory::GameResourceFactory(shared_ptr<GamesContainer> games_container)
     : games_container(games_container) {
@@ -29,6 +30,7 @@ int GameResourceFactory::get_game_id(const shared_ptr<Session> session)
 }
 
 void GameResourceFactory::get_game_handler(const shared_ptr<Session> session) {
+    cout << "Get game." << endl;
     const int game_id = get_game_id(session);
     shared_ptr<Game> game = games_container->get_game(game_id);
 
@@ -36,14 +38,10 @@ void GameResourceFactory::get_game_handler(const shared_ptr<Session> session) {
     //TODO: sperate this to function (base class)
     if(game != nullptr)
     {
-        int status = game->get_status();
-        json board_json = game->get_board()->to_json();
-        Sign currentPlayer = game->get_turn();
-
-        json response_json =  { {"status", status}, {"board", board_json["board"]}, {"currentPlayer", currentPlayer}};
+        json response_json =  game->to_json();
         response = response_json.dump();
     }
-
+    cout<<"Response: " <<response << endl;
     session->close(OK, response,
         {{"Content-Length", to_string(response.size())}});
 

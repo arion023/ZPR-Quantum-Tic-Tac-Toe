@@ -16,6 +16,6 @@ inline std::string sign_to_string(Sign s)
         case Sign::O:
             return "O";
         default:
-            return " "; 
+            return "-"; 
     } 
 }

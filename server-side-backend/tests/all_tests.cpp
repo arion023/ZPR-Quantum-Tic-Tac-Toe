@@ -213,11 +213,11 @@ TEST_CASE("making game", "[game]")
 		REQUIRE(game.make_move(Sign::X, 5, 20) == true);
 	}
 
-	SECTION("game finishing")
+	SECTION("game finishing vertical")
 	{
 		Game game = Game(1, 3, 2);
 		game.start();
-
+		REQUIRE(game.get_status() == Status::Ongoing);
 		REQUIRE(game.make_move(Sign::X, 0, 1) == true);
 		REQUIRE(game.make_move(Sign::O, 3, 4) == true);
 		REQUIRE(game.make_move(Sign::X, 1, 2) == true);
@@ -226,5 +226,62 @@ TEST_CASE("making game", "[game]")
 		REQUIRE(game.get_status() == Status::Cycle);
 		REQUIRE(game.make_move(Sign::O, 0, -1) == true);
 		REQUIRE(game.get_status() == Status::Finished);
+		REQUIRE(game.get_winner() == Sign::X);
 	}
+
+
+	SECTION("game finishing horizontal")
+	{
+		Game game = Game(1, 3, 2);
+		game.start();
+
+		REQUIRE(game.get_status() == Status::Ongoing);
+		REQUIRE(game.make_move(Sign::X, 0, 3) == true);
+		REQUIRE(game.make_move(Sign::O, 1, 2) == true);
+		REQUIRE(game.make_move(Sign::X, 3, 6) == true);
+		REQUIRE(game.make_move(Sign::O, 2, 3) == true);
+		REQUIRE(game.make_move(Sign::X, 3, 0) == true);
+		REQUIRE(game.get_status() == Status::Cycle);
+		REQUIRE(game.make_move(Sign::O, 0, -1) == true);
+		REQUIRE(game.get_status() == Status::Finished);
+		REQUIRE(game.get_winner() == Sign::X);
+	}
+
+
+	SECTION("game finishing diagonal \\")
+	{
+		Game game = Game(1, 3, 2);
+		game.start();
+
+		REQUIRE(game.get_status() == Status::Ongoing);
+		REQUIRE(game.make_move(Sign::X, 1, 2) == true);
+		REQUIRE(game.make_move(Sign::O, 0, 4) == true);
+		REQUIRE(game.make_move(Sign::X, 3, 5) == true);
+		REQUIRE(game.make_move(Sign::O, 4, 8) == true);
+		REQUIRE(game.make_move(Sign::X, 6, 7) == true);
+		REQUIRE(game.make_move(Sign::O, 0, 8) == true);
+		REQUIRE(game.get_status() == Status::Cycle);
+		REQUIRE(game.make_move(Sign::X, 0, -1) == true);
+		REQUIRE(game.get_status() == Status::Finished);
+		REQUIRE(game.get_winner() == Sign::O);
+	}
+
+	SECTION("game finishing diagonal /")
+	{
+		Game game = Game(1, 3, 2);
+		game.start();
+
+		REQUIRE(game.get_status() == Status::Ongoing);
+		REQUIRE(game.make_move(Sign::X, 0, 1) == true);
+		REQUIRE(game.make_move(Sign::O, 2, 4) == true);
+		REQUIRE(game.make_move(Sign::X, 3, 5) == true);
+		REQUIRE(game.make_move(Sign::O, 4, 6) == true);
+		REQUIRE(game.make_move(Sign::X, 7, 8) == true);
+		REQUIRE(game.make_move(Sign::O, 2, 6) == true);
+		REQUIRE(game.get_status() == Status::Cycle);
+		REQUIRE(game.make_move(Sign::X, 2, -1) == true);
+		REQUIRE(game.get_status() == Status::Finished);
+		REQUIRE(game.get_winner() == Sign::O);
+	}
+
 }

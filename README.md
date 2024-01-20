@@ -16,46 +16,64 @@ Aktualnie system pozwala:
 
 *Użyłem proxy aby ominąć zabezpieczenie CORS czyli łącząc się z serwerem na porcie 3000, dostaniemy również odpowiedź od serwera na porcie 8080.
 
-## Requirements
-### Front-End:
-JavaScript Engine
+## Ogólna konfiguracja
+Trzeba uruchomić obydwie aplikacje, aby otrzymać działający system.
+
+## Front-End:
+### Requirements
 - Node.js (installed - latest version)
 - npm
 - nvm (optional)
 
- Packages
+
+### Packages
 - react
 - react-router-dom
+- react-scripts
+- anxios
+- bootstrap
+- sass
 
-*Stworzone przez: `npm create-react-app \<folder name\>`
+*Stworzone przez npm create-react-app \<folder name\>
 
-Before start:
+Przed startem:
 - `npm install react-scripts`
 - `npm install anxios`
 - `npm install bootstrap`
 - `npm install sass`
 
-How to start: `npm start`
+
+### Konfiguracja
+Aplikacja klienta jest skonfigurowana domyślnie na localhost:3000
+Jej finalne end pointy to:
+- [ GET ] /start => start menu
+- [ GET ] /games/{id} => geting game info
 
 
-### Back-End:
+### Uruchamianie aplikacji na localhost'cie
+Należy uruchomić w folderze client-side-frontend polecenie `npm start`. 
+
+
+## Back-End:
+### Requirements
 - restbed [https://github.com/Corvusoft/restbed/tree/master] -> headery dodać do includePath'a g++ oraz zbudowane pliki .so do liblaryPath'a g++'a.
 - C++14 or higher
 
-## Server-side README
-
 ### Konfiguracja 
-
-Trzeba uruchomić obydwie aplikacje, aby otrzymać działający system.
-
 Serwer jest skonfigurowany na localhost:8080
 Jego finalne end pointy to:
 - [ POST ] /games/ => creating new game
 - [ GET ] /GetGames/{id} => geting game info
 - [ POST ] /games/{id}/MakeMove => making move to game with {id}
 
-Aplikacja klienta jest skonfigurowana domyślnie na localhost:3000
-Jej finalne end pointy to:
-- [ GET ] /start => start menu
-- [ GET ] /games/{id} => geting game info
+### Kompilacja i uruchomienie
 
+W folderze server-side-backend należy posłużyc się narzędziem CMake do zbudowania aplikacji oraz następnie ją uruchomić.
+
+### Testownie
+
+Zestaw testów dla serwera znajduję sie w folderze server-side-backend/tests.
+
+Przetestowane są tam wszystkie sytuacje potrzebne do poprawnego działania aplikacji. 
+
+Testy należy zbudować za pomocą CMake z ustawionym odpowiednim targetem.

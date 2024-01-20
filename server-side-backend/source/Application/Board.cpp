@@ -99,7 +99,6 @@ Status Board::make_entanglement(Sign sign, int tile1_idx, int tile2_idx)
 	{
 		std::shared_ptr<Tile> shr_root_t1 = root_t1.lock();
 		std::shared_ptr<Tile> shr_root_t2 = root_t2.lock();
-		std::cout<<"Making entaglement root1: " << shr_root_t1->get_idx() <<"\t root t2: " << shr_root_t2->get_idx() << std::endl;
 		if(shr_root_t1 == shr_root_t2)
 		{
 			//that means cycle occured

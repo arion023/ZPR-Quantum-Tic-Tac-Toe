@@ -8,7 +8,7 @@ import { useState, useEffect } from "react";
 
 function Game( props ) {
 
-    console.log("redner")
+    console.log("render")
 
     const location = useLocation();
 
@@ -18,23 +18,43 @@ function Game( props ) {
     const [boardState, setBoard] = useState([["Error"]]);
     const [gameStatus, setGameStatus] = useState("Off");
     const [player, setPlayer] = useState('-');
+    const [cycle, setCycle] = useState([]);
     
     const [move, setMove ] = useState([]);
     
-    //
+    //load game on init
     useEffect(() => { 
         console.log("onMount")
         getGame(); 
     }, [])
 
+    //move validation
+    useEffect(() => { 
+        if (gameStatus == "cycle" )
+        {
+            console.log("cycle");
+            console.log(cycle);
+            if (move.length > 1)
+            {
+                setMove(move.slice(-1));
+            }
+        }
+    }, [move])
+
     //update response
     useEffect(() => {
+        console.log("response");
+        console.log(response);
         if(response != "None")
         {
             setBoard(parseBoard(response.data.board));
             setPlayer(response.data.currentPlayer);
             setGameStatus(response.data.status);
             setMove([])
+            if(gameStatus == "cycle")
+            {
+                setCycle(response.data.cycle);    
+            }
         }       
     }, [response])
     
@@ -77,9 +97,23 @@ function Game( props ) {
         })
     }
 
+
+    function postCycle()
+    {
+        alert("Invalid move!");
+    }
+
+
     function postMove()
     {
-        if(move.length != 2)
+        let tiles_idx = move;
+
+        if(gameStatus === "cycle" && move.length === 1)
+        {
+            tiles_idx.push(-1);
+        }
+
+        if(tiles_idx.length != 2)
             alert("Invalid move!");
         else
         {
@@ -88,8 +122,8 @@ function Game( props ) {
             //TODO: error handling
             axios.post('/games/'+gameId+'/MakeMove', {
                 player: player,
-                idx1: move[0],
-                idx2: move[1]
+                idx1: tiles_idx[0],
+                idx2: tiles_idx[1]
                   })
                   .then(function (response) {
                     setResponse(response);
@@ -97,7 +131,6 @@ function Game( props ) {
                   .catch(function (error) {
                     console.log(error);
                   });
-
         }
     }
 

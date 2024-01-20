@@ -39,7 +39,7 @@ function Board( {board, move, setMove, playerSign} ) {
     {
         if( move.includes(idx) )
         {
-            return board[idx] + playerSign;
+            return board[idx] + playerSign + "_";
         }
         return board[idx];
     };

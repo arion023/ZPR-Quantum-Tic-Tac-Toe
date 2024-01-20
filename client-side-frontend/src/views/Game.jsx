@@ -1,5 +1,5 @@
 import Board from "../components/Board";
-import { useLocation, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 
 import "../stylesheets/Game.scss"
@@ -10,7 +10,7 @@ function Game(props) {
 
     console.log("render")
 
-    const location = useLocation();
+    const navigate = useNavigate();
 
     const { gameId } = useParams();
 
@@ -57,17 +57,6 @@ function Game(props) {
         getGame();
     }, [])
 
-    //move validation
-    useEffect(() => {
-        if (gameStatus == "cycle") {
-            console.log("cycle");
-            console.log(cycle);
-            if (measurement.length > 1) {
-                setMove(measurement.slice(-1));
-            }
-        }
-    }, [measurement])
-
     //update response
     useEffect(() => {
         console.log("response");
@@ -75,27 +64,25 @@ function Game(props) {
         if (response != "None") {
             setBoard(parseBoard(response.data.board));
             setPlayer(response.data.currentPlayer);
-            setGameStatus(response.data.status);
-            if (response.data.status === "cycle") {
-                setCycle(response.data.cycle);
+            setGameStatus(response.data.status.tag);
+            if (response.data.status.tag === "cycle") {
+                setCycle(response.data.status.cycle);
             }
         }
     }, [response])
 
 
     function parseBoard(boardDict) {
-        var newBoard = new Array();
-        console.log("boardDict")
-        console.log(boardDict)
+        let newBoard = new Array();
+        
         for (let i in boardDict) {
             if (boardDict[i].entanglements != null) {
-
-                let signs = ""
+                let entanglements = ""
                 let ent = boardDict[i].entanglements
                 for (let e_id in ent) {
-                    signs += ent[e_id] + e_id + " ";
+                    entanglements += ent[e_id] + e_id + " ";
                 }
-                newBoard.push(signs)
+                newBoard.push(entanglements)
             }
             else {
                 newBoard.push(boardDict[i].sign);
@@ -107,7 +94,6 @@ function Game(props) {
     function getGame() {
         axios.get('/get_game/' + gameId)
             .then(function (response) {
-                // handle success
                 setResponse(response);
             })
             .catch(function (error) {
@@ -168,8 +154,34 @@ function Game(props) {
         }
     }
 
-    function boardTamplete() {
-        if (gameStatus === "ongoing") {
+    function summaryPopup() {
+        return (gameStatus === "finished") ? (
+            <div className="summary-popup">
+                <div className="inner-summary">
+                    <p>
+                        Game winner is {response.data.status.winner}
+                    </p>
+                    <button className="btn btn-danger btn-lg" onClick={() => navigate("/")}>Start menu</button>
+                </div>
+            </div>
+        ) : ""
+    }
+
+
+    function boardTemplate() {
+
+        if (gameStatus === 'cycle') {
+            return (
+                <div>
+                    <div className="container">
+                        <Board board={boardState} slectedTiles={[measurement]} select={checkAndSetMeasurement} playerSign={flipSign(player)} />
+                    </div>
+                    <div className="container">
+                        <button id="make-move" onClick={() => makeMeasurement()} className="btn btn-danger btn-lg">Make measurement</button>
+                    </div>
+                </div>
+            )
+        } else {
             return (
                 <div>
                     <div className="container">
@@ -181,41 +193,37 @@ function Game(props) {
                 </div>
             )
         }
-        else if (gameStatus == 'cycle') {
-            return (
-                <div>
-                    <div className="container">
-                        <Board board={boardState} slectedTiles={[measurement]} select={checkAndSetMeasurement} playerSign={flipSign(player)} />
-                    </div>
-                    <div className="container">
-                        <button id="make-move" onClick={() => makeMeasurement()} className="btn btn-danger btn-lg">Make measurement</button>
-                    </div>
-                </div>
-            )
-        }
-        else {
-            return (
-                <div>
-                    <p>Error {gameStatus}</p>
-                </div>
-            )
-        }
+
     }
 
 
     return (
-        <div className='App Game'>
-            <div>
-                <h1>Game ID: {gameId} </h1>
-                <h2>turn = {player}</h2>
-                <h2>status = {gameStatus}</h2>
+        <div className='App container-fluid'>
+            <div className="row">
+                <div className="col-md-2 fixed-width-sidebar overlay">
+                    <div>
+                        <h4>Game Info</h4>
+                        <p>
+                            <span className="badge bg-primary">Game ID:</span> {gameId}
+                        </p>
+                        <p>
+                            <span className="badge bg-success">Status:</span> {gameStatus}
+                        </p>
+                    </div>
+                </div>
+                <div className="col flex-column">
+                    <h1 className="text-info">Quantum Tic-Tac-Toe</h1>
+                    <h4 className="text-warning">Turn: {player}</h4>
+                    <div>
+                        {boardTemplate()}
+                    </div>
+                    <div>
+                        {summaryPopup()}
+                    </div>
+                </div>
             </div>
-            <div>
-                {boardTamplete()}
-            </div>
-
         </div>
-    )
+    );
 }
 
 

@@ -47,6 +47,7 @@ bool Game::make_move(Sign sign, int tile1_idx, int tile2_idx)
 			{
 				game_winner = winner;
 				status = Status::Finished;
+				return true;
 			}
 		}
 		else

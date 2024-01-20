@@ -24,7 +24,6 @@ std::vector<std::shared_ptr<Tile>> Board::get_roots() const
 	return complete_graphs_roots;
 }
 
-
 std::shared_ptr<Tile> Board::get_tile(int i) const
 {
 	if(i >= n * n || i < 0)
@@ -93,10 +92,10 @@ Status Board::make_entanglement(Sign sign, int tile1_idx, int tile2_idx)
 	{
 		return Status::False;
 	}
-	
+
 	std::shared_ptr<Tile> t1 = get_tile(tile1_idx);
 	std::shared_ptr<Tile> t2 = get_tile(tile2_idx);
-	
+
 	//check if tiles have const signs, if yes they can't be entangled
 	if(t1->get_const_sign() != Sign::None || t2->get_const_sign() != Sign::None)
 	{
@@ -105,8 +104,6 @@ Status Board::make_entanglement(Sign sign, int tile1_idx, int tile2_idx)
 
 	std::weak_ptr<Tile> root_t1 = t1->get_root();
 	std::weak_ptr<Tile> root_t2 = t2->get_root();
-
-
 
 	//check if this entaglement is connected with any graph
 	if(!root_t1.expired() && !root_t2.expired())
@@ -159,7 +156,8 @@ bool Board::tile_to_collapse(int tile_idx)
 	if(!tile)
 		return false;
 
-	if((tile != cycle_entanglement->get_tile1() && tile != cycle_entanglement->get_tile2()) || !cycle_occured)
+	if((tile != cycle_entanglement->get_tile1() && tile != cycle_entanglement->get_tile2()) ||
+	   !cycle_occured)
 		return false;
 
 	tile->measurement(cycle_entanglement);
@@ -170,7 +168,106 @@ bool Board::tile_to_collapse(int tile_idx)
 
 Sign Board::check_for_winner() const
 {
-	//TODO
+	Sign start_sign = Sign::None;
+	int start_idx;
+	bool finished = false;
+
+	//check horizontal
+	for(int i = 0; i < n; i++)
+	{
+		start_idx = i * n;
+		start_sign = get_tile(start_idx)->get_const_sign();
+		if(start_sign != Sign::None)
+		{
+			finished = true;
+			for(int j = start_idx; j < (start_idx + n); j++)
+			{
+				if(get_tile(j)->get_const_sign() != start_sign)
+				{
+					finished = false;
+					break;
+				}
+			}
+
+			if(finished)
+			{
+				std::cout << "Finished horizonstal: row: " << i << std::endl;
+				return start_sign;
+			}
+		}
+	}
+
+	//check vertical
+	for(int i = 0; i < n; i++)
+	{
+		start_idx = i;
+		start_sign = get_tile(start_idx)->get_const_sign();
+		finished = true;
+		if(start_sign != Sign::None)
+		{
+			for(int j = start_idx; j < n * n; j += n)
+			{
+				if(get_tile(j)->get_const_sign() != start_sign)
+				{
+					finished = false;
+					break;
+				}
+			}
+
+			if(finished)
+			{
+				std::cout << "Finished horizonstal: row: " << i << std::endl;
+				return start_sign;
+			}
+		}
+	}
+
+	//check diagonally "\"
+	start_idx = 0;
+	start_sign = get_tile(start_idx)->get_const_sign();
+
+	if(start_sign != Sign::None)
+	{
+		finished = true;
+		for(int i = start_idx; i < n * n; i += n + 1)
+		{
+			if(get_tile(i)->get_const_sign() != start_sign)
+			{
+				finished = false;
+				break;
+			}
+		}
+
+		if(finished)
+		{
+			std::cout << "Finished diagonally: \\ " << std::endl;
+			return start_sign;
+		}
+	}
+
+	//check diagonally "/"
+	start_idx = n - 1;
+	start_sign = get_tile(start_idx)->get_const_sign();
+
+	if(start_sign != Sign::None)
+	{
+		finished = true;
+		for(int i = start_idx; i < (n * n - n); i += n - 1)
+		{
+			if(get_tile(i)->get_const_sign() != start_sign)
+			{
+				finished = false;
+				break;
+			}
+		}
+		
+		if(finished)
+		{
+			std::cout << "Finished diagonally: / " << std::endl;
+			return start_sign;
+		}
+	}
+
 	return Sign::None;
 }
 

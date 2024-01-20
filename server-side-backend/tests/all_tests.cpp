@@ -215,6 +215,16 @@ TEST_CASE("making game", "[game]")
 
 	SECTION("game finishing")
 	{
-		//TODO
+		Game game = Game(1, 3, 2);
+		game.start();
+
+		REQUIRE(game.make_move(Sign::X, 0, 1) == true);
+		REQUIRE(game.make_move(Sign::O, 3, 4) == true);
+		REQUIRE(game.make_move(Sign::X, 1, 2) == true);
+		REQUIRE(game.make_move(Sign::O, 4, 5) == true);
+		REQUIRE(game.make_move(Sign::X, 2, 0) == true);
+		REQUIRE(game.get_status() == Status::Cycle);
+		REQUIRE(game.make_move(Sign::O, 0, -1) == true);
+		REQUIRE(game.get_status() == Status::Finished);
 	}
 }

@@ -6,6 +6,7 @@ Board::Board(int n)
 	: n(n)
 	, cycle_occured(false)
 	, entanglement_counter(0)
+	, finished(false)
 {
 	tiles_table = std::make_unique<std::shared_ptr<Tile>[]>(pow(n, 2));
 	for(int i = 0; i < pow(n, 2); i++)
@@ -17,6 +18,11 @@ Board::Board(int n)
 int Board::get_size() const
 {
 	return n;
+}
+
+bool Board::get_ifFinished() const
+{
+	return finished;
 }
 
 std::vector<std::shared_ptr<Tile>> Board::get_roots() const
@@ -166,12 +172,12 @@ bool Board::tile_to_collapse(int tile_idx)
 	return true;
 }
 
-Sign Board::check_for_winner() const
+Sign Board::check_for_winner()
 {
 	Sign start_sign = Sign::None;
 	int start_idx;
-	bool finished = false;
 
+	finished = false;
 	//check horizontal
 	for(int i = 0; i < n; i++)
 	{
@@ -191,6 +197,7 @@ Sign Board::check_for_winner() const
 
 			if(finished)
 			{
+				std::cout<<"horizontal"<<std::endl;
 				return start_sign;
 			}
 		}
@@ -215,6 +222,7 @@ Sign Board::check_for_winner() const
 
 			if(finished)
 			{
+				std::cout<<"vertical"<<std::endl;
 				return start_sign;
 			}
 		}
@@ -238,7 +246,7 @@ Sign Board::check_for_winner() const
 
 		if(finished)
 		{
-			std::cout << "Finished diagonally: \\ " << std::endl;
+			std::cout<<"diagonal 1"<<std::endl;
 			return start_sign;
 		}
 	}
@@ -250,7 +258,7 @@ Sign Board::check_for_winner() const
 	if(start_sign != Sign::None)
 	{
 		finished = true;
-		for(int i = start_idx; i < (n * n - n); i += n - 1)
+		for(int i = start_idx; i < (n * n - 1); i += n - 1)
 		{
 			if(get_tile(i)->get_const_sign() != start_sign)
 			{
@@ -258,11 +266,27 @@ Sign Board::check_for_winner() const
 				break;
 			}
 		}
-		
+
 		if(finished)
 		{
-			std::cout << "Finished diagonally: / " << std::endl;
+			std::cout<<"diagonal 2"<<std::endl;
 			return start_sign;
+		}
+	}
+
+	//check for draw
+	finished = true;
+	int counter = 0;
+	for(int i = 0; i < (n * n); i++)
+	{
+		if(get_tile(i)->get_const_sign() == Sign::None)
+		{
+			counter++;
+			if(counter > 1)
+			{
+				finished = false;
+				break;
+			}
 		}
 	}
 

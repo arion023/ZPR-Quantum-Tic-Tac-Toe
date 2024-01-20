@@ -43,7 +43,8 @@ bool Game::make_move(Sign sign, int tile1_idx, int tile2_idx)
 		{
 			status = Status::Ongoing;
 			Sign winner = board->check_for_winner();
-			if(winner != Sign::None)
+
+			if(board->get_ifFinished())
 			{
 				game_winner = winner;
 				status = Status::Finished;

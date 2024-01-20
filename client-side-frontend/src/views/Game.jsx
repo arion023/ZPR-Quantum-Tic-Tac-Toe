@@ -75,7 +75,7 @@ function Game(props) {
     function parseBoard(boardDict) {
         let newBoard = new Array();
         let tileBoard = new Array();
-        
+
         for (let i in boardDict) {
             let tile = {};
             if (boardDict[i].entanglements != null) {
@@ -161,16 +161,26 @@ function Game(props) {
     }
 
     function summaryPopup() {
-        return (gameStatus === "finished") ? (
-            <div className="summary-popup">
-                <div className="inner-summary">
-                    <p>
-                        Game winner is {response.data.status.winner}
-                    </p>
-                    <button className="btn btn-danger btn-lg" onClick={() => navigate("/")}>Start menu</button>
+        let winnerText = "Game winner is"
+        if (gameStatus === "finished") {
+
+            if (response.data.status.winner === "-") {
+                winnerText = "Game over. Draw."
+            }
+            
+            return (
+                <div className="summary-popup">
+                    <div className="inner-summary">
+                        <p>
+                            {winnerText}
+                        </p>
+                        <button className="btn btn-danger btn-lg" onClick={() => navigate("/")}>Start menu</button>
+                    </div>
                 </div>
-            </div>
-        ) : ""
+            )
+        }
+        else
+            return ""
     }
 
 
@@ -191,7 +201,7 @@ function Game(props) {
             return (
                 <div>
                     <div className="container">
-                        <Board board={board} slectedTiles={move} select={pushToMove} playerSign={player}/>
+                        <Board board={board} slectedTiles={move} select={pushToMove} playerSign={player} />
                     </div>
                     <div className="container">
                         <button id="make-move" onClick={() => makeMove()} className="btn btn-warning btn-lg">Make move</button>

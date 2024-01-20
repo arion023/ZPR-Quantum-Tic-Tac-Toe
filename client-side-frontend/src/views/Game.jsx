@@ -15,7 +15,7 @@ function Game(props) {
     const { gameId } = useParams();
 
     const [response, setResponse] = useState("None");
-    const [boardState, setBoard] = useState([["Error"]]);
+    const [board, setBoard] = useState([["Error"]]);
     const [gameStatus, setGameStatus] = useState("Off");
     const [player, setPlayer] = useState('-');
     const [cycle, setCycle] = useState([]);
@@ -74,21 +74,27 @@ function Game(props) {
 
     function parseBoard(boardDict) {
         let newBoard = new Array();
+        let tileBoard = new Array();
         
         for (let i in boardDict) {
+            let tile = {};
             if (boardDict[i].entanglements != null) {
                 let entanglements = ""
                 let ent = boardDict[i].entanglements
                 for (let e_id in ent) {
                     entanglements += ent[e_id] + e_id + " ";
                 }
+                tile.entanglements = entanglements;
                 newBoard.push(entanglements)
             }
             else {
+                tile.sign = boardDict[i].sign;
                 newBoard.push(boardDict[i].sign);
             }
+            tileBoard.push(tile)
         }
-        return newBoard;
+        return tileBoard;
+        //return newBoard;
     }
 
     function getGame() {
@@ -174,7 +180,7 @@ function Game(props) {
             return (
                 <div>
                     <div className="container">
-                        <Board board={boardState} slectedTiles={[measurement]} select={checkAndSetMeasurement} playerSign={flipSign(player)} />
+                        <Board board={board} slectedTiles={[measurement]} select={checkAndSetMeasurement} playerSign={flipSign(player)} cycle={cycle} />
                     </div>
                     <div className="container">
                         <button id="make-move" onClick={() => makeMeasurement()} className="btn btn-danger btn-lg">Make measurement</button>
@@ -185,7 +191,7 @@ function Game(props) {
             return (
                 <div>
                     <div className="container">
-                        <Board board={boardState} slectedTiles={move} select={pushToMove} playerSign={player} />
+                        <Board board={board} slectedTiles={move} select={pushToMove} playerSign={player}/>
                     </div>
                     <div className="container">
                         <button id="make-move" onClick={() => makeMove()} className="btn btn-warning btn-lg">Make move</button>

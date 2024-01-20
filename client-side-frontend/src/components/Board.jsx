@@ -1,27 +1,47 @@
-import { click } from "@testing-library/user-event/dist/click";
-import axios from "axios";
-import { useEffect } from "react";
 
-function Board({ board, slectedTiles, select, playerSign }) {
+function Board({ board, slectedTiles, select, playerSign, cycle }) {
 
     const n = Math.sqrt(board.length);
 
-    function selectTile(idx) {
-        select(idx);
-    };
-
     function renderTile(idx) {
-        if (slectedTiles.includes(idx)) {
-            return board[idx] + playerSign + "_";
+        let signs = "";
+        let selected = "";
+        if ("entanglements" in board[idx]) {
+            signs = board[idx].entanglements;
         }
-        return board[idx];
+        else if (board[idx].sign !== "-") {
+            signs = board[idx].sign;
+        }
+
+        if (slectedTiles.includes(idx)) {
+            signs += " " + playerSign + "_";
+            selected = "selected-tile bg-warning"
+        }
+
+        if (cycle !== undefined && cycle.includes(idx)) {
+            signs = board[idx].entanglements + " " + playerSign;
+            return (
+                <div className="cycle-tile border border-danger">
+                    <div className={selected}>
+                        {signs}
+                    </div>
+                </div>
+            )
+        }
+
+        return (
+            <div className={selected}>
+                {signs}
+            </div>
+        )
+
     };
 
     function renderRow(rowTiles, row) {
         return (
             <div className="row-container d-flex no-wrap">
                 {rowTiles.map((tile, idx) => (
-                    <button key={idx} className="tic-tac-toe-tile" onClick={() => selectTile(row * n + idx)}>
+                    <button key={idx} className="tic-tac-toe-tile" onClick={() => select(row * n + idx)}>
                         {renderTile(row * n + idx)}
                     </button>
                 ))}

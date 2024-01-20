@@ -26,6 +26,30 @@
     background-color: beige;
 }
 
+.selected-tile {
+    position: relative;
+    flex-direction: column;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 90%;
+    height: 90%;
+    border-radius: 60px;
+}
+
+.cycle-tile {
+    position: relative;
+    flex-direction: column;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    border-radius: 5px;
+}
+
+
+
 .entanglement {
     font-size: small;
 }

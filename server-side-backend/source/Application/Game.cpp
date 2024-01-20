@@ -59,13 +59,15 @@ bool Game::make_move(Sign sign, int tile1_idx, int tile2_idx)
 			return false;
 		else
 			status = result;
+		
+		change_turn();
+
 	}
 	else
 	{
 		return false;
 	}
 
-	change_turn();
 	return true;
 }
 

@@ -186,6 +186,32 @@ TEST_CASE("making game", "[game]")
 		REQUIRE(game.get_status() == Status::Ongoing);
 	}
 
+	//check if tiles can be entangled after collapse
+
+		SECTION("creating cycle 2")
+	{
+		Game game = setupGame();
+		REQUIRE(game.make_move(Sign::X, 0, 1) == true);
+		REQUIRE(game.make_move(Sign::O, 1, 6) == true);
+		REQUIRE(game.make_move(Sign::X, 6, 0) == true);
+		REQUIRE(game.get_turn() == Sign::O);
+		REQUIRE(game.get_status() == Status::Cycle);
+		//cannot make normal move thus waiting for selectiong collapsing tile 
+		REQUIRE(game.make_move(Sign::O, 10, 11) == false);
+		//invalid move
+		REQUIRE(game.make_move(Sign::O, -1, 10) == false);
+		//invalid collapsing tile
+		REQUIRE(game.make_move(Sign::O, 1, -1) == false);
+		//correct collapsing tile
+		REQUIRE(game.make_move(Sign::O, 6, -1) == true);
+		REQUIRE(game.get_status() == Status::Ongoing);
+		
+		REQUIRE(game.make_move(Sign::O, 6, 10) == false);
+		REQUIRE(game.make_move(Sign::O, 6, 0) == false);
+		REQUIRE(game.make_move(Sign::O, 6, -1) == false);
+		REQUIRE(game.make_move(Sign::O, 4, 5) == true);
+		REQUIRE(game.make_move(Sign::X, 5, 20) == true);
+	}
 
 	SECTION("game finishing")
 	{

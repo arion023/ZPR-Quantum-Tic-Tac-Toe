@@ -82,19 +82,33 @@ std::shared_ptr<Entanglement> Board::get_cycle_entanglement() const
 //returns if cycle occured
 Status Board::make_entanglement(Sign sign, int tile1_idx, int tile2_idx)
 {
+	//check if are diffrent
 	if(tile1_idx == tile2_idx)
 	{
 		return Status::False;
 	}
 
+	//check if tiles exists
 	if(!get_tile(tile1_idx) || !get_tile(tile2_idx))
 	{
 		return Status::False;
 	}
-	//check if this entaglement is connected with any graph
-	std::weak_ptr<Tile> root_t1 = get_tile(tile1_idx)->get_root();
-	std::weak_ptr<Tile> root_t2 = get_tile(tile2_idx)->get_root();
+	
+	std::shared_ptr<Tile> t1 = get_tile(tile1_idx);
+	std::shared_ptr<Tile> t2 = get_tile(tile2_idx);
+	
+	//check if tiles have const signs, if yes they can't be entangled
+	if(t1->get_const_sign() != Sign::None || t2->get_const_sign() != Sign::None)
+	{
+		return Status::False;
+	}
 
+	std::weak_ptr<Tile> root_t1 = t1->get_root();
+	std::weak_ptr<Tile> root_t2 = t2->get_root();
+
+
+
+	//check if this entaglement is connected with any graph
 	if(!root_t1.expired() && !root_t2.expired())
 	{
 		std::shared_ptr<Tile> shr_root_t1 = root_t1.lock();
@@ -111,31 +125,29 @@ Status Board::make_entanglement(Sign sign, int tile1_idx, int tile2_idx)
 		}
 		else
 		{
-			rebase_cycle(root_t2.lock(), root_t1.lock());
+			rebase_cycle(shr_root_t2, shr_root_t1);
 		}
 	}
 	else if(!root_t1.expired())
 	{
-		get_tile(tile2_idx)->set_root(get_tile(tile1_idx)->get_root());
+		get_tile(tile2_idx)->set_root(t1->get_root());
 	}
 	else if(!root_t2.expired())
 	{
-		get_tile(tile1_idx)->set_root(get_tile(tile2_idx)->get_root());
+		get_tile(tile1_idx)->set_root(t2->get_root());
 	}
 	else
 	{
-		std::shared_ptr<Tile> t1 = get_tile(tile1_idx);
-		std::shared_ptr<Tile> t2 = get_tile(tile2_idx);
 		t1->set_root(t1);
 		t2->set_root(t1);
 		complete_graphs_roots.push_back(t1);
 	}
 
-	entanglement_counter++;
 	std::shared_ptr<Entanglement> entanglement =
-		std::make_shared<Entanglement>(sign, entanglement_counter, tiles_table[tile1_idx], tiles_table[tile2_idx]);
+		std::make_shared<Entanglement>(sign, entanglement_counter, t1, t2);
 
 	entanglement->update_entanglements(entanglement);
+	entanglement_counter++;
 
 	return Status::True;
 }

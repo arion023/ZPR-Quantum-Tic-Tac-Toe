@@ -2,42 +2,19 @@ import { click } from "@testing-library/user-event/dist/click";
 import axios from "axios";
 import { useEffect } from "react";
 
-function Board( {board, move, setMove, playerSign} ) {
+function Board( {board, slectedTiles, select, playerSign} ) {
 
     const n = Math.sqrt(board.length);
     let tmpBoard = board.slice();
 
-    function markTile(idx)
+    function selectTile(idx)
     {
-        console.log(move);
-        if( move.length === 0)
-        {
-            setMove([ idx ]);
-        }
-        else if(move.length === 1)
-        {
-            if(move.includes(idx))
-            {
-                setMove([]);
-            }
-            else
-            {
-                let tmpmove = move.slice();
-                tmpmove.push(idx);
-                setMove(tmpmove);
-            }
-        } else
-        {
-            if(move.includes(idx))
-            {
-                setMove([]);
-            }
-        }
+        select(idx);
     };
 
     function renderTile(idx)
     {
-        if( move.includes(idx) )
+        if( slectedTiles.includes(idx) )
         {
             return board[idx] + playerSign + "_";
         }
@@ -49,7 +26,7 @@ function Board( {board, move, setMove, playerSign} ) {
         return (
             <div className="row-container">
             {rowTiles.map( (tile, idx) => (
-                <button key={idx} className="tic-tac-toe-tile" onClick={() => markTile(row*n + idx)}>
+                <button key={idx} className="tic-tac-toe-tile" onClick={() => selectTile(row*n + idx)}>
                     {renderTile(row*n + idx)}
                 </button>
             ))}

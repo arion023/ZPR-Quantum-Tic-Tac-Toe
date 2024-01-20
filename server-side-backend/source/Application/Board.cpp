@@ -191,7 +191,6 @@ Sign Board::check_for_winner() const
 
 			if(finished)
 			{
-				std::cout << "Finished horizonstal: row: " << i << std::endl;
 				return start_sign;
 			}
 		}
@@ -216,7 +215,6 @@ Sign Board::check_for_winner() const
 
 			if(finished)
 			{
-				std::cout << "Finished horizonstal: row: " << i << std::endl;
 				return start_sign;
 			}
 		}

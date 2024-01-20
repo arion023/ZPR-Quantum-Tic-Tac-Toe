@@ -60,9 +60,8 @@ bool Game::make_move(Sign sign, int tile1_idx, int tile2_idx)
 			return false;
 		else
 			status = result;
-		
-		change_turn();
 
+		change_turn();
 	}
 	else
 	{
@@ -101,13 +100,18 @@ json Game::to_json()
 {
 	json game_json;
 	game_json["gameId"] = id;
-	game_json["status"] = game_status_to_string(status);
+	game_json["status"]["tag"] = game_status_to_string(status);
 	game_json["currentPlayer"] = sign_to_string(turn);
 	game_json["board"] = board->to_json();
-	if(status == Status::Cycle)
+	
+	switch(status)
 	{
-		game_json["cycle"] = { board->get_cycle_entanglement()->get_tile1()->get_idx(),
-							   board->get_cycle_entanglement()->get_tile2()->get_idx() };
+	case Status::Cycle:
+		game_json["status"]["cycle"] = {board->get_cycle_entanglement()->get_tile1()->get_idx(),
+										board->get_cycle_entanglement()->get_tile2()->get_idx()};
+		break;
+	case Status::Finished:
+		game_json["status"]["winner"] = sign_to_string(game_winner);
 	}
 	return game_json;
 }

@@ -206,7 +206,7 @@ TEST_CASE("making game", "[game]")
 		REQUIRE(game.make_move(Sign::O, 6, -1) == true);
 		REQUIRE(game.get_status() == Status::Ongoing);
 		
-		REQUIRE(game.make_move(Sign::O, 6, 10) == false);
+		REQUIRE(game.make_move(Sign::X, 6, 10) == false);
 		REQUIRE(game.make_move(Sign::O, 6, 0) == false);
 		REQUIRE(game.make_move(Sign::O, 6, -1) == false);
 		REQUIRE(game.make_move(Sign::O, 4, 5) == true);

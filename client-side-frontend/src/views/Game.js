@@ -45,8 +45,7 @@ function Game(props) {
     }
 
     function checkAndSetMeasurement(value) {
-        if(cycle.includes(value))
-        {
+        if (cycle.includes(value)) {
             setMeasurement(value)
         }
     }

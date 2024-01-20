@@ -1,7 +1,7 @@
 # Quatum-Tic-Tac-Toe
 
 ## Krótki opis szkieletu aplikacji
-Mój szkielet apliakcji opiera sie na dwóch oddzielnie działajcych programach.
+Mój aplikacja opiera sie na dwóch oddzielnie działajcych programach.
 Jeden to frontend napisany w JS i w react'cie, udostępniony w formie serwera na localhost:3000.
 Druga część tego projektu to backend napisany w C++ w formie API z użyciem biblioteki restbed z którym łączy się frontendowy serwer.
 

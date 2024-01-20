@@ -1,52 +1,19 @@
 # Server-side README
 
-## Realizacja planszy
-Za pomocą jednowymiarowej tabeli o długości n^2.
+## Requirements
+- restbed [https://github.com/Corvusoft/restbed/tree/master] -> headery dodać do includePath'a g++ oraz zbudowane pliki .so do liblaryPath'a g++'a.
+- C++14 or higher
 
 
-## Kodowanie tablicy
-Signs
-0 -> None
-1 -> X
-2 -> Y
+## Kompilacja i uruchomienie
 
-{
-    "board" : {
-    "$tile_idx" : tile,
-    "$tile_idx" : tile,
-    "$tile_idx" : tile,
-    ...
-    }
-}
+Należy posłużyc się narzędziem CMake do zbudowania aplikacji oraz następnie ją uruchomić.
 
-tile = {
-    "ConstSign" : sign,
-    "Entaglments" : {
-        "entaglment_number" : sing,
-        "entaglment_number" : sing
-        ...
-    }
-}
+## Testownie
 
-### TODO
-Ogólne
-- [ ] rozważyć dodanie klasy player
-- [ ] może dodac typedef?
-- [ ] może dodać using?
-- [ ] dodać metody to_json.
-- [ ] sprawdzac czy id gry jest prawidłowe
+Zestaw testów dla serwera znajduję sie w folderze server-side-backend/tests.
 
-Tile
-- [ ] zaimplementować get_signs
-- [ ] zastanowić się czy potrzebna jest klasa entanglement? tak... -> dodać int - nr tury, zastnaowic się czy przechowywać shared_ptr na Tile czy robić to po indexie w boardzie
-- [ ] czy vector jest ok w przechowaniu entanglements w klasie Tile?
+Przetestowane są tam wszystkie sytuacje potrzebne do poprawnego działania aplikacji. 
 
-Board
-- [ ] zaimplementować make_entanglements
-- [ ] zaimplementować check_for_cycles
-- [ ] zaimplementować check_for_winner
-- [ ] Zastanowić sie czy nie dodać pochodnej klasy implementującej rzeczy potrzebne do API
-
-GamesContainer
-- [ ] zaimpelemtnować get_game
+Testy należy zbudować za pomocą CMake z ustawionym odpowiednim targetem.
 

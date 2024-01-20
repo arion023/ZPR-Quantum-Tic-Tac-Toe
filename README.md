@@ -6,23 +6,13 @@ Jeden to frontend napisany w JS i w react'cie, udostępniony w formie serwera na
 Druga część tego projektu to backend napisany w C++ w formie API z użyciem biblioteki restbed z którym łączy się frontendowy serwer.
 
 Aktualnie system pozwala:
-- stworzyć nową grę
+- stworzyć nową grę o dowolnych wymiarach
 - wczytać zawartość gry
-- wykonać ruch w grze 
-
-UWAGI:
-- Ruchy nie są sprawdzane czy są prawidłowe oraz nie jest w żaden sposób walidowany stan planszy. 
-- Nie ma algorytmu szukającego cykli, więc jedynie można dodać stan splątany (wykonując ruch), daltego też nie ma sprawdzania czy jakiś gracz nie zwyciężył
-- Nie ma sztucznego gracza.
-- Nie ma obsługi większości wyjątków i sytuacji poza standardowymi.
-- Struktura części API jest jeszcze do przemodelowania.
-- Projekt ma trochę niespójności w postaci formatu danych itd.
-
-Szkielet aplikacji jest bardzo wstępnym projektem gdzie wiele rzeczy jest do poprawienia.
-Podstawowym moim celem było napisanie aplikacji, którą będzie miała już nakreśloną swoją architekture i większe decyzje projektowe za sobą, aby móc się skupić w późniejszej części jedynie na impelementacji.
-
-Jestem świadomy braku testów jednostkwoych. Niestety nie zdążyłem ich zrobić już w sensownym terminie. Postaram sie je przygotować do ostatecznego projektu.
-
+- wykonać ruch w grze
+- wykrywać cykle
+- wykonywać "pomiary"
+- rozstrzygać o wyniku gry
+- Tryb gry: offline - 2 osobowa
 
 *Użyłem proxy aby ominąć zabezpieczenie CORS czyli łącząc się z serwerem na porcie 3000, dostaniemy również odpowiedź od serwera na porcie 8080.
 
@@ -48,67 +38,24 @@ Before start:
 How to start: `npm start`
 
 
-Back-End:
+### Back-End:
 - restbed [https://github.com/Corvusoft/restbed/tree/master] -> headery dodać do includePath'a g++ oraz zbudowane pliki .so do liblaryPath'a g++'a.
 - C++14 or higher
 
-
 ## Server-side README
 
-###Konfiguracja 
+### Konfiguracja 
+
+Trzeba uruchomić obydwie aplikacje, aby otrzymać działający system.
+
 Serwer jest skonfigurowany na localhost:8080
-Jego finalne end poity to:
-- [ POST ] /games => creating new game
-- [ GET ] /get_game/{id} => geting game ifo
+Jego finalne end pointy to:
+- [ POST ] /games/ => creating new game
+- [ GET ] /GetGames/{id} => geting game info
 - [ POST ] /games/{id}/MakeMove => making move to game with {id}
 
+Aplikacja klienta jest skonfigurowana domyślnie na localhost:3000
+Jej finalne end pointy to:
+- [ GET ] /start => start menu
+- [ GET ] /games/{id} => geting game info
 
-### Realizacja planszy
-Za pomocą jednowymiarowej tabeli o długości n^2.
-
-
-### Kodowanie tablicy
-Signs
-0 -> None
-1 -> X
-2 -> Y
-
-{
-    "board" : {
-    "$tile_idx" : tile,
-    "$tile_idx" : tile,
-    "$tile_idx" : tile,
-    ...
-    }
-}
-
-tile = {
-    "ConstSign" : sign,
-    "Entaglments" : {
-        "entaglment_number" : sing,
-        "entaglment_number" : sing
-        ...
-    }
-}
-
-### TODO
-Ogólne
-- [ ] rozważyć dodanie klasy player
-- [ ] może dodac typedef?
-- [ ] może dodać using?
-- [ ] dodać metody to_json.
-- [ ] sprawdzac czy id gry jest prawidłowe
-
-Tile
-- [ ] zaimplementować get_signs
-- [ ] zastanowić się czy potrzebna jest klasa entanglement? tak... -> dodać int - nr tury, zastnaowic się czy przechowywać shared_ptr na Tile czy robić to po indexie w boardzie
-- [ ] czy vector jest ok w przechowaniu entanglements w klasie Tile?
-
-Board
-- [ ] zaimplementować make_entanglements
-- [ ] zaimplementować check_for_cycles
-- [ ] zaimplementować check_for_winner
-- [ ] Zastanowić sie czy nie dodać pochodnej klasy implementującej rzeczy potrzebne do API
-
-GamesContainer
-- [ ] zaimpelemtnować get_game

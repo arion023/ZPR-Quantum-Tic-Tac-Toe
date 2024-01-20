@@ -19,7 +19,6 @@ int main()
     auto resource_factory3 = make_shared<MakeMoveResourceFactory>(games_container);
     auto settings_factory = make_shared<GameServiceSettingsFactory>();
 
-    //TODO: pass resources as table;
     GameService service {resource_factory, resource_factory2, resource_factory3, settings_factory};
 
     service.start();

@@ -9,7 +9,7 @@ GameResourceFactory::GameResourceFactory(shared_ptr<GamesContainer> games_contai
 
     _game_resource = make_shared<Resource>();
     _game_resource->set_path(
-        "/get_game/{id: [0-9]*}"
+        "/GetGame/{id: [0-9]*}"
     );
 
     _game_resource->set_method_handler("GET", [&](const shared_ptr<Session> session){
@@ -35,7 +35,6 @@ void GameResourceFactory::get_game_handler(const shared_ptr<Session> session) {
     shared_ptr<Game> game = games_container->get_game(game_id);
 
     string response = "{\"Error\": \"Object not found\"}";
-    //TODO: sperate this to function (base class)
     if(game != nullptr)
     {
         json response_json =  game->to_json();

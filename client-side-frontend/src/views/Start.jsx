@@ -50,7 +50,6 @@ function Start() {
     const navigate = useNavigate();
 
     function playButtonHandler() {
-        //TODO: error handling
         axios.post('/games', {
         players: playersNumber,
         boardSize: boardSize

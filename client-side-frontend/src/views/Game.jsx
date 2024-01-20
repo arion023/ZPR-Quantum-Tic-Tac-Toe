@@ -98,12 +98,12 @@ function Game(props) {
     }
 
     function getGame() {
-        axios.get('/get_game/' + gameId)
+        axios.get('/GetGame/' + gameId)
             .then(function (response) {
                 setResponse(response);
             })
             .catch(function (error) {
-                // TODO
+                // ""
                 console.log(error);
             })
     }
@@ -135,7 +135,6 @@ function Game(props) {
 
     function postMove(tile_idx1, tile_idx2) {
         {
-            //TODO: error handling
             axios.post('/games/' + gameId + '/MakeMove', {
                 player: player,
                 idx1: tile_idx1,
